@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="manifest" href="manifest.json"><meta name="theme-color" content="#A2352A"><link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="궁합코어">
+<meta property="og:title" content="궁합코어 — 두 사람의 사주 궁합"><meta property="og:description" content="생년월일시만 넣으면 8개 축 궁합을 무료로 볼 수 있어요."><meta property="og:image" content="icon-512.png">
+</head><body>
+<title>궁합코어</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="두 사람의 생년월일시로 8개 축 사주 궁합을 무료로 확인하세요. 10년 흐름까지 담은 상세 리포트와 와이튜브 1:1 궁합 상담.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="styles.css">
+
+<header class="top">
+  <div class="wrap">
+    <div class="seal-mark" aria-hidden="true">宮<br>合</div>
+    <h1>궁합코어<small>와이튜브 사주코어 엔진 기반</small></h1>
+    <p class="lead">두 사람의 생년월일시만 넣으면, 서로 어떤 기운을 주고받는지 8개 축으로 풀어 드립니다. 연인·부부는 물론 가족·동업자 궁합도 볼 수 있어요.</p>
+    <div class="price-line">
+      <span>기본 궁합 <b>무료</b></span>
+      <span>상세 리포트 <b id="pReport">9,900원</b></span>
+      <span>1:1 궁합 상담 <b id="pConsult">100,000원</b></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap" id="app">
+
+  <!-- ===== 홈: 입력 + 무료 결과 ===== -->
+  <div id="viewHome" style="display:grid;gap:22px">
+    <section class="panel" aria-labelledby="formTitle">
+      <h2 class="sec" id="formTitle">두 사람 정보 넣기</h2>
+      <form id="gunghapForm" novalidate>
+        <div class="people">
+          <fieldset>
+            <legend>첫 번째 사람</legend>
+            <label for="nameA">이름 또는 별명</label>
+            <input type="text" id="nameA" placeholder="예: 지민" maxlength="10" autocomplete="off">
+            <label for="bdateA">생년월일 (양력)</label>
+            <input type="date" id="bdateA" min="1900-01-01" max="2035-12-31" required>
+            <label for="btimeA">태어난 시각</label>
+            <input type="time" id="btimeA">
+            <div class="check"><input type="checkbox" id="timeUnknownA"><label for="timeUnknownA">시각을 몰라요</label></div>
+          </fieldset>
+          <fieldset>
+            <legend>두 번째 사람</legend>
+            <label for="nameB">이름 또는 별명</label>
+            <input type="text" id="nameB" placeholder="예: 서준" maxlength="10" autocomplete="off">
+            <label for="bdateB">생년월일 (양력)</label>
+            <input type="date" id="bdateB" min="1900-01-01" max="2035-12-31" required>
+            <label for="btimeB">태어난 시각</label>
+            <input type="time" id="btimeB">
+            <div class="check"><input type="checkbox" id="timeUnknownB"><label for="timeUnknownB">시각을 몰라요</label></div>
+          </fieldset>
+        </div>
+        <p class="form-note" id="formError" role="alert"></p>
+        <button type="submit" class="btn-seal">무료로 궁합 보기</button>
+        <p class="form-note">입력한 정보는 이 기기 안에서만 계산되며 서버에 저장되지 않습니다. 자시(23~01시) 출생은 정자시 기준으로 계산합니다.</p>
+      </form>
+    </section>
+
+    <div id="sampleNote" class="muted small" style="margin-bottom:-12px">아래는 <b>예시 결과</b>입니다. 위에 두 분 정보를 넣으면 바로 바뀝니다.</div>
+    <div id="freeResult" style="display:grid;gap:22px"></div>
+
+    <!-- 상품 -->
+    <section class="panel" id="offers" aria-labelledby="offerTitle">
+      <h2 class="sec" id="offerTitle">더 깊이 보고 싶다면</h2>
+      <div class="offers">
+        <article class="offer main">
+          <div class="offer-head"><h3>상세 궁합 리포트</h3><span class="price" id="pReport2">9,900원</span></div>
+          <ul>
+            <li>8개 축 풀이 전문 (무료 결과에서 잠긴 6개 축 포함)</li>
+            <li>두 사람의 사주 원국, 오행 분포, 용신 비교</li>
+            <li>앞으로 10년, 해마다 두 사람에게 좋은 해·조심할 해</li>
+            <li>서로에게 힘이 되는 활동·장소·말 습관 처방</li>
+            <li>평생 다시 열어볼 수 있는 리포트 링크</li>
+          </ul>
+          <ol class="steps" id="orderSteps">
+            <li><div>위에서 <b>두 사람 정보를 넣고 '무료로 궁합 보기'</b>를 눌러 주세요. 그러면 신청 코드가 만들어집니다.</div></li>
+            <li><div>아래 계좌로 <b id="pReport3">9,900원</b>을 보내 주세요.<br>
+              <span class="account" id="bankLine"></span></div></li>
+            <li><div>신청 코드와 입금자명을 카카오톡으로 보내 주세요.
+              <div class="copybox"><input id="orderCode" readonly value="먼저 무료 궁합을 확인해 주세요" aria-label="신청 코드"><button type="button" class="btn-line" id="copyCode">복사</button></div>
+              <div class="toast" id="copyToast"></div>
+              <a class="btn-line" id="kakaoOrder" href="#" target="_blank" rel="noopener" style="margin-top:6px">카카오톡으로 신청하기</a></div></li>
+            <li><div>입금 확인 후 <b>리포트 링크</b>를 카카오톡으로 보내 드립니다. (평일 10~19시, 보통 1시간 안)</div></li>
+          </ol>
+        </article>
+        <article class="offer">
+          <div class="offer-head"><h3>와이튜브 1:1 궁합 상담</h3><span class="price" id="pConsult2">100,000원</span></div>
+          <ul>
+            <li>명리 전문 상담가가 두 사람의 원국을 함께 놓고 직접 풀이</li>
+            <li>결혼 시기·택일, 갈등 패턴, 가족 관계까지 질문 자유</li>
+            <li>상세 리포트를 받으신 분은 리포트를 바탕으로 더 깊게 상담</li>
+          </ul>
+          <a class="btn-seal" id="kakaoConsult" href="#" target="_blank" rel="noopener">상담 예약 문의하기</a>
+        </article>
+      </div>
+    </section>
+
+    <section class="panel" aria-labelledby="faqTitle">
+      <h2 class="sec" id="faqTitle">자주 묻는 질문</h2>
+      <details><summary>태어난 시각을 모르면 결과가 틀리나요?</summary><p>시각 없이도 8개 축 모두 계산됩니다. 다만 시주가 빠져 오행 분포와 용신이 조금 달라질 수 있어, 아시면 넣는 편이 더 정확합니다.</p></details>
+      <details><summary>음력 생일만 알아요.</summary><p>지금은 양력만 입력할 수 있습니다. 음력 생일은 포털 사이트의 양력 변환기로 바꾼 뒤 넣어 주세요.</p></details>
+      <details><summary>점수로 궁합을 알려주지 않나요?</summary><p>축마다 성격이 다른 기운을 하나의 숫자로 뭉뚱그리지 않기 위해 '우호·중립·주의' 3단계로만 보여드립니다.</p></details>
+      <details><summary>리포트는 어떻게 받나요?</summary><p>입금 확인 후 카카오톡으로 리포트 링크를 보내 드립니다. 링크는 기간 제한 없이 다시 열어볼 수 있습니다.</p></details>
+      <details><summary>환불되나요?</summary><p>리포트 링크를 받기 전에는 전액 환불됩니다. 리포트를 받은 뒤에는 디지털 콘텐츠 특성상 환불이 어렵고, 입력 오류로 잘못 만들어진 경우 무료로 다시 만들어 드립니다.</p></details>
+    </section>
+  </div>
+
+  <!-- ===== 상세 리포트 ===== -->
+  <div id="viewReport" hidden style="display:grid;gap:22px">
+    <div id="fullReport" style="display:grid;gap:22px"></div>
+    <section class="panel">
+      <h2 class="sec">두 분의 이야기를 더 깊이 듣고 싶다면</h2>
+      <p class="small">와이튜브 1:1 궁합 상담에서 이 리포트를 바탕으로 결혼 시기, 갈등 패턴, 가족 관계까지 직접 풀이해 드립니다.</p>
+      <a class="btn-seal" id="kakaoConsult2" href="#" target="_blank" rel="noopener">1:1 상담 문의하기</a>
+      <p class="small muted" style="margin-top:10px">이 리포트는 받으신 분만 여는 개인 링크입니다. 다른 분께 공유하지 말아 주세요.</p>
+    </section>
+  </div>
+  <section class="panel" id="viewBadLink" hidden>
+    <h2 class="sec">리포트 링크를 확인해 주세요</h2>
+    <p class="small">링크가 잘렸거나 잘못 복사된 것 같습니다. 카카오톡으로 받은 링크 전체를 다시 눌러 주세요. 계속 열리지 않으면 카카오톡으로 알려 주시면 바로 다시 보내 드립니다.</p>
+  </section>
+
+  <!-- ===== 운영자 화면 (#admin) ===== -->
+  <section class="panel" id="viewAdmin" hidden>
+    <h2 class="sec">운영자 · 리포트 링크 발급</h2>
+    <div id="adminLock">
+      <label for="adminPin">운영자 비밀번호</label>
+      <input type="password" id="adminPin" autocomplete="off">
+      <button type="button" class="btn-seal" id="adminEnter">들어가기</button>
+      <p class="form-note" id="adminErr" role="alert"></p>
+    </div>
+    <div id="adminBody" hidden>
+      <label for="adminCode">고객이 보낸 신청 코드</label>
+      <textarea id="adminCode" rows="3" placeholder="카카오톡으로 받은 신청 코드를 붙여넣으세요"></textarea>
+      <button type="button" class="btn-seal" id="adminMake">입금 확인 · 리포트 링크 만들기</button>
+      <div id="adminOut" class="small" style="margin-top:14px"></div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <nav><a href="#terms" id="lnkTerms">이용약관·환불</a><a href="#privacy" id="lnkPrivacy">개인정보 처리방침</a></nav>
+    <div class="policy" id="policyBox" hidden></div>
+    <p id="bizLine1"></p>
+    <p id="bizLine2"></p>
+    <p id="bizLine3"></p>
+    <p style="margin-top:8px">궁합코어의 모든 결과는 명리학 이론에 따른 참고용 해설이며, 관계의 결과를 보장하지 않습니다.</p>
+  </div>
+</footer>
+
+<script src="config.js"></script>
+<script src="saju-core.js"></script>
+<script src="gunghap-core.js"></script>
+<script src="gunghap-report.js"></script>
+<script src="app.js"></script>
+</body></html>
