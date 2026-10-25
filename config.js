@@ -8,7 +8,7 @@
    ============================================================ */
 window.GUNGHAP_CONFIG = {
   // 사이트 주소 (리포트 링크를 만들 때 앞부분으로 씁니다)
-  siteUrl: 'https://claude.ai/artifact/5dBUxYvjiZQ4K5xT8QamcV',   // GitHub Pages로 옮기면 그 주소로 바꾸세요
+  siteUrl: 'https://waitube.github.io/gunghapcore/',   // 사이트 주소가 바뀌면 여기를 고치세요
 
   // 가격
   reportPrice: 9900,
