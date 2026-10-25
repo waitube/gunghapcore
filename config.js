@@ -15,7 +15,7 @@ window.GUNGHAP_CONFIG = {
   consultPrice: 100000,
 
   // 신청·상담 창구 (카카오톡)
-  kakaoUrl: 'https://open.kakao.com/o/s2ZATWpc',
+  kakaoUrl: 'https://open.kakao.com/o/sNZem6Ti',   // 궁합코어 전용 1:1 오픈채팅
 
   // 입금 계좌 (1차 운영: 계좌이체 후 카톡으로 신청)
   bank: {
