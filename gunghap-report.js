@@ -44,15 +44,49 @@
     return Array.from(new Uint8Array(hash)).slice(0, 5).map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
+  /* ---------- 서머타임·옛 표준시 자동 보정 ----------
+     출처: IANA tz 데이터베이스 Asia/Seoul (Rule ROK, Zone Asia/Seoul)
+     · 1908.4.1~1911.12.31, 1954.3.21~1961.8.9: 표준시가 UTC+8:30 (지금보다 30분 늦음)
+     · 아래 기간: 서머타임(+1시간). 시계 기준 시작 시각 ~ 끝 시각
+     출생 기록 시각을 지금의 한국 표준시(UTC+9) 기준으로 바꾼 뒤 사주를 계산합니다. */
+  const KR_DST = [
+    ['1948-06-01T00:00', '1948-09-13T00:00'], ['1949-04-03T00:00', '1949-09-11T00:00'],
+    ['1950-04-01T00:00', '1950-09-10T00:00'], ['1951-05-06T00:00', '1951-09-09T00:00'],
+    ['1955-05-05T00:00', '1955-09-09T00:00'], ['1956-05-20T00:00', '1956-09-30T00:00'],
+    ['1957-05-05T00:00', '1957-09-22T00:00'], ['1958-05-04T00:00', '1958-09-21T00:00'],
+    ['1959-05-03T00:00', '1959-09-20T00:00'], ['1960-05-01T00:00', '1960-09-18T00:00'],
+    ['1987-05-10T02:00', '1987-10-11T03:00'], ['1988-05-08T02:00', '1988-10-09T03:00'],
+  ];
+  const p2 = n => String(n).padStart(2, '0');
+  // date 'YYYY-MM-DD', time 'HH:MM' (기록된 시계 시각) → 한국 표준시(UTC+9) 기준 날짜·시각과 보정 설명
+  function toKST(date, time) {
+    if (!date || !time) return { date, time, shift: 0, reasons: [] };
+    const key = `${date}T${time}`;
+    const reasons = [];
+    let shift = 0; // 더할 분
+    if ((key >= '1908-04-01T00:00' && key < '1912-01-01T00:00') || (key >= '1954-03-21T00:00' && key < '1961-08-10T00:00')) {
+      shift += 30; reasons.push('당시 표준시(UTC+8:30) 30분 보정');
+    }
+    if (KR_DST.some(([a, b]) => key >= a && key < b)) { shift -= 60; reasons.push('서머타임 1시간 보정'); }
+    if (!shift) return { date, time, shift: 0, reasons };
+    const [y, m, d] = date.split('-').map(Number), [h, mi] = time.split(':').map(Number);
+    const t = new Date(Date.UTC(y, m - 1, d, h, mi) + shift * 60000);
+    return {
+      date: `${t.getUTCFullYear()}-${p2(t.getUTCMonth() + 1)}-${p2(t.getUTCDate())}`,
+      time: `${p2(t.getUTCHours())}:${p2(t.getUTCMinutes())}`, shift, reasons,
+    };
+  }
+
   /* ---------- 계산 ---------- */
   function personSaju(p) {
-    const [y, m, d] = p.date.split('-').map(Number);
-    let hour = 12, minute = 0;
     const hasTime = !!p.time;
-    if (hasTime) { [hour, minute] = p.time.split(':').map(Number); }
+    const k = toKST(p.date, p.time);
+    const [y, m, d] = k.date.split('-').map(Number);
+    let hour = 12, minute = 0;
+    if (hasTime) { [hour, minute] = k.time.split(':').map(Number); }
     const saju = SC.computeSaju(y, m, d, hour, minute, hasTime, 'M', JASI_MODE);
     const ys = SC.computeYongsin(saju, hasTime);
-    return { ...p, saju, ys, hasTime };
+    return { ...p, saju, ys, hasTime, kst: k };
   }
   function analyze(Ain, Bin) {
     const A = personSaju(Ain), B = personSaju(Bin);
@@ -216,6 +250,7 @@
     const person = P => `
       <div class="person">
         <h4>${esc(P.name)} <span class="muted">${esc(P.date.replace(/-/g, '.'))}${P.time ? ' ' + esc(P.time) : ' (시각 모름)'}</span></h4>
+        ${P.kst && P.kst.shift ? `<p class="kst-note">${esc(P.kst.reasons.join(' · '))} → 표준시 ${esc(P.kst.date.replace(/-/g, '.'))} ${esc(P.kst.time)} 기준으로 계산</p>` : ''}
         ${pillarsHTML(P)}
         ${elemBarsHTML(P)}
         <p class="narr">${esc(SC.buildOverviewNarrative(P.saju, P.ys))}</p>
@@ -248,5 +283,5 @@
     <section class="panel note-panel"><p class="small">이 리포트는 명리학 이론(오행 상생상극·십신·12운성·합충·용신)에 따른 참고용 해설이며, 두 사람 관계의 결과를 보장하지 않습니다. 실제 관계는 서로의 대화와 노력이 가장 중요합니다.</p></section>`;
   }
 
-  root.GunghapReport = { encodeOrder, decodeOrder, unlockKey, analyze, renderFree, renderFull, won, esc };
+  root.GunghapReport = { toKST, encodeOrder, decodeOrder, unlockKey, analyze, renderFree, renderFull, won, esc };
 })(typeof window !== 'undefined' ? window : globalThis);

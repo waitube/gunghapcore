@@ -36,26 +36,48 @@
             <legend>첫 번째 사람</legend>
             <label for="nameA">이름 또는 별명</label>
             <input type="text" id="nameA" placeholder="예: 지민" maxlength="10" autocomplete="off">
-            <label for="bdateA">생년월일 (양력)</label>
-            <input type="date" id="bdateA" min="1900-01-01" max="2035-12-31" required>
+            <div class="cal-switch" role="radiogroup" aria-label="달력 종류">
+              <input type="radio" name="calA" id="calASolar" value="solar" checked><label for="calASolar">양력</label>
+              <input type="radio" name="calA" id="calALunar" value="lunar"><label for="calALunar">음력</label>
+            </div>
+            <label for="yearA">생년월일</label>
+            <div class="ymd">
+              <select id="yearA" aria-label="태어난 해"></select>
+              <select id="monthA" aria-label="태어난 달"></select>
+              <select id="dayA" aria-label="태어난 날"></select>
+            </div>
+            <div class="check" id="leapWrapA" hidden><input type="checkbox" id="leapA"><label for="leapA">윤달이에요</label></div>
+            <p class="form-note conv" id="convA" aria-live="polite"></p>
             <label for="btimeA">태어난 시각</label>
             <input type="time" id="btimeA">
+            <p class="form-note" id="sijiA" aria-live="polite"></p>
             <div class="check"><input type="checkbox" id="timeUnknownA"><label for="timeUnknownA">시각을 몰라요</label></div>
           </fieldset>
           <fieldset>
             <legend>두 번째 사람</legend>
             <label for="nameB">이름 또는 별명</label>
             <input type="text" id="nameB" placeholder="예: 서준" maxlength="10" autocomplete="off">
-            <label for="bdateB">생년월일 (양력)</label>
-            <input type="date" id="bdateB" min="1900-01-01" max="2035-12-31" required>
+            <div class="cal-switch" role="radiogroup" aria-label="달력 종류">
+              <input type="radio" name="calB" id="calBSolar" value="solar" checked><label for="calBSolar">양력</label>
+              <input type="radio" name="calB" id="calBLunar" value="lunar"><label for="calBLunar">음력</label>
+            </div>
+            <label for="yearB">생년월일</label>
+            <div class="ymd">
+              <select id="yearB" aria-label="태어난 해"></select>
+              <select id="monthB" aria-label="태어난 달"></select>
+              <select id="dayB" aria-label="태어난 날"></select>
+            </div>
+            <div class="check" id="leapWrapB" hidden><input type="checkbox" id="leapB"><label for="leapB">윤달이에요</label></div>
+            <p class="form-note conv" id="convB" aria-live="polite"></p>
             <label for="btimeB">태어난 시각</label>
             <input type="time" id="btimeB">
+            <p class="form-note" id="sijiB" aria-live="polite"></p>
             <div class="check"><input type="checkbox" id="timeUnknownB"><label for="timeUnknownB">시각을 몰라요</label></div>
           </fieldset>
         </div>
         <p class="form-note" id="formError" role="alert"></p>
         <button type="submit" class="btn-seal">무료로 궁합 보기</button>
-        <p class="form-note">입력한 정보는 이 기기 안에서만 계산되며 서버에 저장되지 않습니다. 자시(23~01시) 출생은 정자시 기준으로 계산합니다.</p>
+        <p class="form-note">입력한 정보는 이 기기 안에서만 계산되며 서버에 저장되지 않습니다. 태어난 시각은 한국 표준시 30분 보정을 적용합니다(예: 술시 19:30~21:29). 23:30 이후 출생은 다음 날 자시로 봅니다.</p>
       </form>
     </section>
 
@@ -101,7 +123,7 @@
     <section class="panel" aria-labelledby="faqTitle">
       <h2 class="sec" id="faqTitle">자주 묻는 질문</h2>
       <details><summary>태어난 시각을 모르면 결과가 틀리나요?</summary><p>시각 없이도 8개 축 모두 계산됩니다. 다만 시주가 빠져 오행 분포와 용신이 조금 달라질 수 있어, 아시면 넣는 편이 더 정확합니다.</p></details>
-      <details><summary>음력 생일만 알아요.</summary><p>지금은 양력만 입력할 수 있습니다. 음력 생일은 포털 사이트의 양력 변환기로 바꾼 뒤 넣어 주세요.</p></details>
+      <details><summary>음력 생일만 알아요.</summary><p>생년월일 위의 '음력'을 누르고 음력 날짜를 그대로 넣으시면 됩니다. 윤달에 태어나셨다면 '윤달이에요'에 체크해 주세요. 한국천문연구원 기준으로 양력으로 바꿔 계산합니다.</p></details>
       <details><summary>점수로 궁합을 알려주지 않나요?</summary><p>축마다 성격이 다른 기운을 하나의 숫자로 뭉뚱그리지 않기 위해 '우호·중립·주의' 3단계로만 보여드립니다.</p></details>
       <details><summary>리포트는 어떻게 받나요?</summary><p>입금 확인 후 카카오톡으로 리포트 링크를 보내 드립니다. 링크는 기간 제한 없이 다시 열어볼 수 있습니다.</p></details>
       <details><summary>환불되나요?</summary><p>리포트 링크를 받기 전에는 전액 환불됩니다. 리포트를 받은 뒤에는 디지털 콘텐츠 특성상 환불이 어렵고, 입력 오류로 잘못 만들어진 경우 무료로 다시 만들어 드립니다.</p></details>
@@ -153,6 +175,7 @@
 </footer>
 
 <script src="config.js"></script>
+<script src="lunar.js"></script>
 <script src="saju-core.js"></script>
 <script src="gunghap-core.js"></script>
 <script src="gunghap-report.js"></script>

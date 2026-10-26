@@ -28,15 +28,95 @@
     catch (e) { if (input) { input.focus(); input.select(); } toastEl.textContent = '선택된 글자를 길게 눌러 복사해 주세요.'; }
   }
 
+  /* ---------- 홈: 입력 (양력·음력, 시지 안내) ---------- */
+  const BR = ['자', '축', '인', '묘', '진', '사', '오', '미', '신', '유', '술', '해'];
+  const BR_RANGE = ['23:30~01:29', '01:30~03:29', '03:30~05:29', '05:30~07:29', '07:30~09:29', '09:30~11:29',
+    '11:30~13:29', '13:30~15:29', '15:30~17:29', '17:30~19:29', '19:30~21:29', '21:30~23:29'];
+  const pad = n => String(n).padStart(2, '0');
+  const lunarCal = window.KoreanLunarCalendar ? new window.KoreanLunarCalendar() : null;
+  const isLunar = s => $('cal' + s + 'Lunar').checked;
+
+  function fillSelect(sel, from, to, unit, keep) {
+    const prev = keep ? sel.value : '';
+    sel.innerHTML = `<option value="">${unit}</option>` +
+      Array.from({ length: to - from + 1 }, (_, i) => from + i).map(n => `<option value="${n}">${n}${unit}</option>`).join('');
+    if (prev && Number(prev) >= from && Number(prev) <= to) sel.value = prev;
+  }
+  function daysInSolarMonth(y, m) { return new Date(Date.UTC(y, m, 0)).getUTCDate(); }
+
+  // 음력 → 양력. 존재하지 않는 날짜(작은달 30일, 없는 윤달)는 null
+  function lunarToSolar(y, m, d, leap) {
+    if (!lunarCal || !lunarCal.setLunarDate(y, m, d, leap)) return null;
+    const sol = lunarCal.getSolarCalendar();
+    if (!lunarCal.setSolarDate(sol.year, sol.month, sol.day)) return null;
+    const back = lunarCal.getLunarCalendar();
+    if (back.year !== y || back.month !== m || back.day !== d || !!back.intercalation !== !!leap) return null;
+    return sol;
+  }
+
+  // 입력값을 양력 날짜로 읽기 → { ok, date:'YYYY-MM-DD', msg }
+  function readDate(s) {
+    const y = Number($('year' + s).value), m = Number($('month' + s).value), d = Number($('day' + s).value);
+    if (!y || !m || !d) return { ok: false, msg: '' };
+    if (!isLunar(s)) {
+      if (d > daysInSolarMonth(y, m)) return { ok: false, msg: `${m}월에는 ${d}일이 없어요.` };
+      return { ok: true, date: `${y}-${pad(m)}-${pad(d)}`, msg: '' };
+    }
+    const leap = $('leap' + s).checked;
+    const sol = lunarToSolar(y, m, d, leap);
+    if (!sol) return { ok: false, msg: leap ? `${y}년에는 윤${m}월이 없거나 ${d}일이 없는 달이에요.` : `음력 ${y}년 ${m}월에는 ${d}일이 없어요.` };
+    return { ok: true, date: `${sol.year}-${pad(sol.month)}-${pad(sol.day)}`,
+      msg: `양력 ${sol.year}년 ${sol.month}월 ${sol.day}일로 계산합니다.` };
+  }
+
+  function refreshDays(s) {
+    const y = Number($('year' + s).value), m = Number($('month' + s).value);
+    const max = isLunar(s) ? 30 : (y && m ? daysInSolarMonth(y, m) : 31);
+    fillSelect($('day' + s), 1, max, '일', true);
+  }
+  function refreshConv(s) {
+    $('leapWrap' + s).hidden = !isLunar(s);
+    if (!isLunar(s)) $('leap' + s).checked = false;
+    const r = readDate(s);
+    $('conv' + s).textContent = r.msg;
+    refreshSiji(s);
+  }
+  function refreshSiji(s) {
+    const t = $('btime' + s).value, el = $('siji' + s);
+    if (!t || $('timeUnknown' + s).checked) { el.textContent = ''; return; }
+    const r = readDate(s);
+    const k = r.ok ? R.toKST(r.date, t) : { time: t, shift: 0, reasons: [] };
+    const [h, mi] = k.time.split(':').map(Number);
+    const solarMin = ((h * 60 + mi - 30) % 1440 + 1440) % 1440;
+    const b = Math.floor(((solarMin + 60) % 1440) / 120);
+    const moved = r.ok && k.date !== r.date ? (k.date < r.date ? '전날 ' : '다음 날 ') : '';
+    const pre = k.shift ? `${k.reasons.join(' · ')}으로 ${moved}${k.time} 기준, ` : '';
+    el.textContent = `${pre}${BR[b]}시(${BR_RANGE[b]})로 계산합니다.` + (b === 0 && h >= 23 ? ' 날짜는 다음 날로 봅니다.' : '');
+  }
+
+  const thisYear = new Date().getFullYear();
+  ['A', 'B'].forEach(s => {
+    fillSelect($('year' + s), 1920, thisYear, '년');
+    fillSelect($('month' + s), 1, 12, '월');
+    fillSelect($('day' + s), 1, 31, '일');
+    [('year' + s), ('month' + s)].forEach(id => $(id).addEventListener('change', () => { refreshDays(s); refreshConv(s); }));
+    $('day' + s).addEventListener('change', () => refreshConv(s));
+    $('leap' + s).addEventListener('change', () => refreshConv(s));
+    document.querySelectorAll(`input[name="cal${s}"]`).forEach(r => r.addEventListener('change', () => { refreshDays(s); refreshConv(s); }));
+    $('btime' + s).addEventListener('input', () => refreshSiji(s));
+    $('btime' + s).addEventListener('change', () => refreshSiji(s));
+    $('timeUnknown' + s).addEventListener('change', ev => { $('btime' + s).disabled = ev.target.checked; refreshSiji(s); });
+  });
+
   /* ---------- 홈: 무료 결과 ---------- */
   let currentCode = null;
   function readPerson(s, fallbackName) {
-    const date = $('bdate' + s).value;
-    if (!date) return null;
+    const r = readDate(s);
+    if (!r.ok) return { error: r.msg };
     const unknown = $('timeUnknown' + s).checked;
     const time = unknown ? '' : ($('btime' + s).value || '');
     const name = ($('name' + s).value.trim() || fallbackName).slice(0, 10);
-    return { name, date, time };
+    return { name, date: r.date, time };
   }
   function showFree(A, B, isSample) {
     const an = R.analyze(A, B);
@@ -51,14 +131,12 @@
   $('gunghapForm').addEventListener('submit', e => {
     e.preventDefault();
     const A = readPerson('A', '첫 번째 분'), B = readPerson('B', '두 번째 분');
-    if (!A || !B) { $('formError').textContent = '두 사람의 생년월일을 모두 넣어 주세요.'; return; }
+    const bad = [A, B].find(p => p.error !== undefined);
+    if (bad) { $('formError').textContent = bad.error || '두 사람의 생년월일을 모두 골라 주세요.'; return; }
     $('formError').textContent = '';
     showFree(A, B, false);
     $('freeResult').classList.remove('reveal'); void $('freeResult').offsetWidth; $('freeResult').classList.add('reveal');
     $('freeResult').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  });
-  ['A', 'B'].forEach(s => {
-    $('timeUnknown' + s).addEventListener('change', ev => { $('btime' + s).disabled = ev.target.checked; });
   });
   $('copyCode').addEventListener('click', () => {
     if (!currentCode) { $('copyToast').textContent = '먼저 위에서 두 사람의 무료 궁합을 확인해 주세요.'; return; }

@@ -123,7 +123,11 @@ function computeSaju(y,m,d,hour,minute,hasTime,gender,jasiMode){
 
   let hourStem=null, hourBranch=null;
   if(hasTime){
-    hourBranch = Math.floor(((hour+1)%24)/2);
+    // 한국 표준시(동경 135도)는 실제 태양시보다 약 30분 빠르므로 30분을 보정해 시지를 정합니다.
+    // 자시 23:30~01:29, 축시 01:30~03:29 … 술시 19:30~21:29, 해시 21:30~23:29
+    // (날짜가 23:30에 넘어가는 정자시 기준과도 맞춰짐)
+    const solarMin = ((hour*60 + minute - 30) % 1440 + 1440) % 1440;
+    hourBranch = Math.floor(((solarMin + 60) % 1440) / 120);
     const hbaseArr=[0,2,4,6,8];
     hourStem = (hbaseArr[dayStem%5] + hourBranch)%10;
   }
