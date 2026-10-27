@@ -211,4 +211,11 @@ select{width:100%;min-width:0;padding:10px 8px;border:1px solid var(--wood);bord
 #consultPanel{border:2px solid var(--seal)}
 #consultForm .check{align-items:flex-start}
 #consultForm .check input{margin-top:4px}
+.pay-agree{align-items:flex-start;margin-top:14px}
+.pay-agree input{margin-top:4px}
+#payBox .btn-seal{margin-top:10px}
+#payBox+.steps{margin-top:16px}
+.alt-pay{margin-top:14px;border-top:1px dashed var(--wood);padding-top:6px}
+.alt-pay summary{font-size:13.5px;color:var(--ink-soft)}
+.paid-notice{border:2px solid var(--mok)}
 [hidden]{display:none!important}
