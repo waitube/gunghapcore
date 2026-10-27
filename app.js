@@ -13,8 +13,8 @@
 
   /* ---------- 설정값 채우기 ---------- */
   ['pReport', 'pReport2', 'pReport3'].forEach(id => { $(id).textContent = won(CFG.reportPrice); });
-  ['pConsult', 'pConsult2'].forEach(id => { $(id).textContent = won(CFG.consultPrice); });
-  ['kakaoOrder', 'kakaoConsult', 'kakaoConsult2'].forEach(id => { $(id).href = CFG.kakaoUrl; });
+  ['pConsult', 'pConsult2', 'pConsult3'].forEach(id => { $(id).textContent = won(CFG.consultPrice); });
+  ['kakaoOrder', 'kakaoConsult3'].forEach(id => { $(id).href = CFG.kakaoUrl; });
   const bank = CFG.bank || {};
   $('bankLine').textContent = `${bank.name} ${bank.account} (예금주 ${bank.holder})`;
   const biz = CFG.business || {};
@@ -110,6 +110,30 @@
 
   /* ---------- 홈: 무료 결과 ---------- */
   let currentCode = null;
+  let currentPair = null; // 상담 신청에 함께 보낼 두 사람 정보
+
+  /* ---------- 관계 고르기 ---------- */
+  const RELS = R.RELATIONS;
+  let currentRel = 'love';
+  const GROUPS = [['연인', ['love', 'some']], ['일', ['boss', 'junior', 'ceo', 'peer', 'partner']], ['가족·친구', ['parent', 'friend']]];
+  $('relPicker').innerHTML = GROUPS.map(([g, keys]) => `<p class="rel-group">${g}</p>` + keys.map(k =>
+    `<input type="radio" name="rel" id="rel-${k}" value="${k}"${k === currentRel ? ' checked' : ''}><label for="rel-${k}">${RELS[k].label}</label>`).join('')).join('');
+  const HERO = ['boss', 'junior', 'ceo', 'peer', 'partner', 'love', 'parent'];
+  $('heroRels').innerHTML = HERO.map(k => `<button type="button" data-rel="${k}" class="${RELS[k].ctx === 'work' ? 'work' : ''}">${RELS[k].label}</button>`).join('');
+  function setRel(k, scroll) {
+    if (!RELS[k]) return;
+    currentRel = k;
+    $('rel-' + k).checked = true;
+    $('legendA').textContent = RELS[k].a;
+    $('legendB').textContent = RELS[k].b;
+    $('nameA').placeholder = `이름 또는 별명 (비우면 '${RELS[k].a}')`;
+    $('nameB').placeholder = `이름 또는 별명 (비우면 '${RELS[k].b}')`;
+    $('goBtn').textContent = `${RELS[k].label} 궁합 무료로 보기`;
+    if (scroll) $('formTitle').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  document.querySelectorAll('input[name="rel"]').forEach(r => r.addEventListener('change', () => setRel(r.value)));
+  document.querySelectorAll('#heroRels button').forEach(b => b.addEventListener('click', () => setRel(b.dataset.rel, true)));
+  setRel(currentRel);
   function readPerson(s, fallbackName) {
     const r = readDate(s);
     if (!r.ok) return { error: r.msg };
@@ -118,19 +142,20 @@
     const name = ($('name' + s).value.trim() || fallbackName).slice(0, 10);
     return { name, date: r.date, time };
   }
-  function showFree(A, B, isSample) {
-    const an = R.analyze(A, B);
+  function showFree(A, B, isSample, rel) {
+    const an = R.analyze(A, B, rel || currentRel);
     $('freeResult').innerHTML = R.renderFree(an);
     $('sampleNote').hidden = !isSample;
     if (!isSample) {
-      currentCode = R.encodeOrder(A, B);
+      currentCode = R.encodeOrder(A, B, currentRel);
+      currentPair = { A, B, rel: currentRel };
       $('orderCode').value = currentCode;
       $('copyToast').textContent = '';
     }
   }
   $('gunghapForm').addEventListener('submit', e => {
     e.preventDefault();
-    const A = readPerson('A', '첫 번째 분'), B = readPerson('B', '두 번째 분');
+    const A = readPerson('A', RELS[currentRel].a), B = readPerson('B', RELS[currentRel].b);
     const bad = [A, B].find(p => p.error !== undefined);
     if (bad) { $('formError').textContent = bad.error || '두 사람의 생년월일을 모두 골라 주세요.'; return; }
     $('formError').textContent = '';
@@ -152,7 +177,8 @@
     $('viewHome').hidden = true; $('viewAdmin').hidden = true;
     if (!ok) { $('viewBadLink').hidden = false; $('viewReport').hidden = true; return; }
     $('viewBadLink').hidden = true;
-    $('fullReport').innerHTML = R.renderFull(R.analyze(order.A, order.B));
+    $('fullReport').innerHTML = R.renderFull(R.analyze(order.A, order.B, order.rel));
+    currentPair = { A: order.A, B: order.B, rel: order.rel, paid: true };
     $('viewReport').hidden = false;
     document.title = `${order.A.name} × ${order.B.name} 상세 궁합 리포트 | 궁합코어`;
   }
@@ -181,7 +207,7 @@
     const base = (CFG.siteUrl || location.href.split('#')[0]).replace(/#.*$/, '');
     const link = `${base}#${code}.${key}`;
     const p = x => `${R.esc(x.name)} · ${R.esc(x.date)} ${x.time ? R.esc(x.time) : '(시각 모름)'}`;
-    const msg = `안녕하세요, 궁합코어입니다. 입금 확인되었습니다.\n${order.A.name}님 × ${order.B.name}님 상세 궁합 리포트를 보내 드립니다.\n${link}\n링크는 기간 제한 없이 다시 열어보실 수 있어요. 1:1 상담이 필요하시면 언제든 말씀해 주세요.`;
+    const msg = `안녕하세요, 궁합코어입니다. 입금 확인되었습니다.\n${order.A.name}님 × ${order.B.name}님 (${RELS[order.rel].label}) 상세 궁합 리포트를 보내 드립니다.\n${link}\n링크는 기간 제한 없이 다시 열어보실 수 있어요. 1:1 상담이 필요하시면 언제든 말씀해 주세요.`;
     out.innerHTML = `
       <p><b>주문 내용 확인</b><br>${p(order.A)}<br>${p(order.B)}</p>
       <label for="adminMsg">고객에게 보낼 메시지</label>
@@ -191,6 +217,57 @@
         <a class="btn-line" href="${R.esc(link)}" target="_blank" rel="noopener">리포트 미리 열기</a>
       </div><div class="toast" id="adminToast"></div>`;
     $('copyMsg').addEventListener('click', () => copyText(msg, $('adminMsg'), $('adminToast')));
+  });
+
+
+  /* ---------- 1:1 상담 신청 (FormSubmit → 운영자 이메일) ---------- */
+  const personLine = p => `${p.name} · 양력 ${p.date} ${p.time || '(시각 모름)'}`;
+  function openConsult() {
+    const panel = $('consultPanel');
+    panel.hidden = false;
+    $('cPair').textContent = currentPair ? `함께 보낼 궁합 정보: ${personLine(currentPair.A)} / ${personLine(currentPair.B)}` : '두 사람의 생년월일을 먼저 넣고 궁합을 보시면, 그 정보도 함께 전달됩니다.';
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    setTimeout(() => $('cName').focus({ preventScroll: true }), 400);
+  }
+  document.querySelectorAll('.open-consult').forEach(b => b.addEventListener('click', openConsult));
+
+  $('consultForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const err = $('cError');
+    const name = $('cName').value.trim(), phone = $('cPhone').value.trim();
+    const digits = phone.replace(/\D/g, '');
+    if (!name) { err.textContent = '이름을 넣어 주세요.'; $('cName').focus(); return; }
+    if (digits.length < 9 || digits.length > 12) { err.textContent = '연락받을 휴대폰 번호를 정확히 넣어 주세요.'; $('cPhone').focus(); return; }
+    if (!$('cAgree').checked) { err.textContent = '개인정보 수집·이용에 동의해 주셔야 연락드릴 수 있어요.'; return; }
+    if ($('cHoney').value) return; // 자동 스팸
+    err.textContent = '';
+    const btn = $('cSubmit'); btn.disabled = true; btn.textContent = '보내는 중…';
+    const body = {
+      _subject: `[궁합코어] 1:1 상담 신청 — ${name}`,
+      _template: 'table',
+      _captcha: 'false',
+      '이름': name,
+      '연락처': phone,
+      '상담 방식': $('cWay').value,
+      '연락 가능 시간': $('cWhen').value.trim() || '-',
+      '궁금한 점': $('cMsg').value.trim() || '-',
+      '관계': currentPair ? RELS[currentPair.rel || 'love'].label : RELS[currentRel].label,
+      '첫 번째 사람': currentPair ? personLine(currentPair.A) : '-',
+      '두 번째 사람': currentPair ? personLine(currentPair.B) : '-',
+      '상세 리포트 구매': currentPair && currentPair.paid ? '예 (리포트 링크에서 신청)' : '아니오/확인 필요',
+      '신청 시각': new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' }),
+    };
+    try {
+      const res = await fetch(`https://formsubmit.co/ajax/${CFG.consultEmail}`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(body),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || String(data.success) === 'false') throw new Error(data.message || res.status);
+      $('consultForm').hidden = true; $('cDone').hidden = false; $('cDonePhone').textContent = phone;
+    } catch (ex) {
+      err.innerHTML = '신청을 보내지 못했습니다. 잠시 후 다시 눌러 주시거나, <a href="' + R.esc(CFG.kakaoUrl) + '" target="_blank" rel="noopener">카카오톡</a>으로 이름과 연락처를 남겨 주세요.';
+      btn.disabled = false; btn.textContent = '상담 신청 보내기';
+    }
   });
 
   /* ---------- 약관 ---------- */
@@ -207,6 +284,7 @@
       <ul>
         <li>무료 궁합 계산은 이용자 기기 안에서만 이뤄지며, 입력한 이름·생년월일시는 서버로 전송되거나 저장되지 않습니다.</li>
         <li>상세 리포트를 신청하면 신청 코드(두 사람의 이름 또는 별명, 생년월일시)와 입금자명을 카카오톡으로 받습니다. 이는 리포트 제작과 발송, 고객 문의 응대에만 사용합니다.</li>
+        <li>1:1 상담을 신청하면 이름, 휴대폰 번호, 원하는 상담 방식·시간, 두 사람의 생년월일시를 받아 상담 연락에만 사용하며, 상담 종료 후 1년이 지나면 파기합니다. 신청 내용은 이메일 전송 대행 서비스(FormSubmit)를 거쳐 운영자 이메일로 전달됩니다.</li>
         <li>보관 기간: 전자상거래법에 따라 대금 결제 기록은 5년, 소비자 불만·분쟁 처리 기록은 3년 보관한 뒤 파기합니다.</li>
         <li>이름 대신 별명을 넣어도 리포트를 받는 데 문제가 없습니다. 다른 사람의 정보는 그분이 동의한 경우에만 넣어 주세요.</li>
         <li>개인정보 보호 책임자: ${R.esc(CFG.business.ceo)} (${R.esc(CFG.business.email)})</li>
@@ -226,10 +304,13 @@
     if (h === 'admin') return showAdmin();
     if (h === 'terms' || h === 'privacy') { showSample(); return showPolicy(h); }
     if (h && h.includes('.') && h.length > 20) return showReport(h);
+    // #boss, #ceo 처럼 관계 이름을 붙인 주소로 들어오면 그 관계를 골라 둔 채 시작 (인스타·블로그 링크용)
+    if (RELS[h]) setRel(h);
     showSample();
   }
   function showSample() {
-    showFree({ name: '지민', date: '1992-05-14', time: '07:30' }, { name: '서준', date: '1990-11-03', time: '22:10' }, true);
+    const rel = currentRel === 'love' ? 'boss' : currentRel;
+    showFree({ name: '나', date: '1992-05-14', time: '07:30' }, { name: RELS[rel].b === '상대' ? '김팀장' : RELS[rel].b, date: '1983-09-21', time: '' }, true, rel);
   }
   route();
 

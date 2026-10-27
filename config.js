@@ -17,6 +17,10 @@ window.GUNGHAP_CONFIG = {
   // 신청·상담 창구 (카카오톡)
   kakaoUrl: 'https://open.kakao.com/o/sNZem6Ti',   // 궁합코어 전용 1:1 오픈채팅
 
+  // 1:1 상담 신청을 받을 이메일 (FormSubmit 서비스가 이 주소로 신청 내용을 보내 줍니다.
+  //  처음 한 번은 이 주소로 오는 'Activate Form' 메일의 버튼을 눌러야 이후 신청이 도착합니다.)
+  consultEmail: 'waitube2@gmail.com',
+
   // 입금 계좌 (1차 운영: 계좌이체 후 카톡으로 신청)
   bank: {
     name: '농협',
