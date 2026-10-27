@@ -107,6 +107,12 @@
             <li>서로에게 힘이 되는 활동·장소·말 습관 처방</li>
             <li>평생 다시 열어볼 수 있는 리포트 링크</li>
           </ul>
+          <div id="payBox" hidden>
+            <div class="check pay-agree"><input type="checkbox" id="payAgree"><label for="payAgree">결제 즉시 열리는 디지털 콘텐츠라, 리포트를 연 뒤에는 환불이 어렵다는 점을 확인했어요. (입력 오류는 1회 무료로 다시 만들어 드려요)</label></div>
+            <button type="button" class="btn-seal" id="payBtn">카드·간편결제로 <span id="pReport4">9,900원</span> 결제하기</button>
+            <p class="form-note" id="payNote">결제가 끝나면 바로 상세 리포트가 열리고, 그 주소로 언제든 다시 볼 수 있어요.</p>
+            <p class="form-note" id="myReports" hidden></p>
+          </div>
           <ol class="steps" id="orderSteps">
             <li><div>위에서 <b>두 사람 정보를 넣고 '무료로 궁합 보기'</b>를 눌러 주세요. 그러면 신청 코드가 만들어집니다.</div></li>
             <li><div>아래 계좌로 <b id="pReport3">9,900원</b>을 보내 주세요.<br>
@@ -141,8 +147,21 @@
     </section>
   </div>
 
+  <!-- ===== 결제 확인 ===== -->
+  <section class="panel" id="viewPay" hidden aria-live="polite">
+    <h2 class="sec" id="payTitle">결제를 확인하고 있어요</h2>
+    <p class="small" id="payMsg">잠시만 기다려 주세요. 창을 닫지 마세요.</p>
+    <div id="payActions"></div>
+  </section>
+
   <!-- ===== 상세 리포트 ===== -->
   <div id="viewReport" hidden style="display:grid;gap:22px">
+    <section class="panel paid-notice" id="paidNotice" hidden>
+      <p class="done-msg">결제가 완료됐어요. 고맙습니다.</p>
+      <p class="small">이 페이지 주소가 두 분의 리포트 열쇠예요. 아래 버튼으로 링크를 복사해 카톡 '나와의 채팅' 등에 저장해 두시면 언제든 다시 열 수 있어요.</p>
+      <div class="copybox"><input id="myLink" readonly aria-label="내 리포트 링크"><button type="button" class="btn-line" id="copyMyLink">링크 복사</button></div>
+      <div class="toast" id="myLinkToast"></div>
+    </section>
     <div id="fullReport" style="display:grid;gap:22px"></div>
     <section class="panel">
       <h2 class="sec">두 분의 이야기를 더 깊이 듣고 싶다면</h2>
