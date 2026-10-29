@@ -22,7 +22,7 @@ window.GUNGHAP_CONFIG = {
   apiBase: 'https://gunghapcore.waitube2.workers.dev',
   // 토스페이먼츠 클라이언트 키 (test_ck_… 또는 live_ck_…). 공개돼도 되는 키입니다.
   //  ※ 시크릿 키(…_sk_…)는 절대 여기에 넣지 마세요. 서버 설정에만 넣습니다.
-  tossClientKey: 'test_ck_AQ92ymxN34LvARoLMk7g3ajRKXvd',
+  tossClientKey: 'live_ck_26DlbXAaV0LPmk176zy5VqY50Q9R',
 
   // 1:1 상담 신청을 받을 이메일 (FormSubmit 서비스가 이 주소로 신청 내용을 보내 줍니다.
   //  처음 한 번은 이 주소로 오는 'Activate Form' 메일의 버튼을 눌러야 이후 신청이 도착합니다.)
