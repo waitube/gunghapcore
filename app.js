@@ -23,9 +23,21 @@
   $('bizLine3').textContent = `대표전화 ${biz.phone} · 이메일 ${biz.email}`;
 
   /* ---------- 복사 ---------- */
+  // 두 가지 방법으로 복사 (브라우저마다 되는 방식이 달라서)
+  function copyByTextarea(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.setAttribute('readonly', '');
+    ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0;font-size:16px';
+    document.body.appendChild(ta); ta.focus(); ta.select(); ta.setSelectionRange(0, text.length);
+    let ok = false; try { ok = document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta); return ok;
+  }
   async function copyText(text, input, toastEl) {
-    try { await navigator.clipboard.writeText(text); toastEl.textContent = '복사했습니다.'; }
-    catch (e) { if (input) { input.focus(); input.select(); } toastEl.textContent = '선택된 글자를 길게 눌러 복사해 주세요.'; }
+    let ok = false;
+    try { if (navigator.clipboard && window.isSecureContext) { await navigator.clipboard.writeText(text); ok = true; } } catch (e) {}
+    if (!ok) ok = copyByTextarea(text);
+    if (ok) { toastEl.textContent = '복사했습니다. 카톡 등에 붙여넣기(Ctrl+V) 하세요.'; }
+    else { if (input) { input.focus(); input.select(); } toastEl.textContent = '선택된 글자를 길게 눌러(또는 Ctrl+C) 복사해 주세요.'; }
   }
 
   /* ---------- 홈: 입력 (양력·음력, 시지 안내) ---------- */
