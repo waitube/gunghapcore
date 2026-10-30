@@ -307,8 +307,17 @@
     return Array.from(new Uint8Array(h)).map(b => b.toString(16).padStart(2, '0')).join('');
   }
   let adminPin = '';
+  // 서버를 쓰면 비밀번호 확인도 서버(Cloudflare의 ADMIN_PIN) 한 곳에서만 합니다.
+  const PIN_PROBE = 'eyJ2IjoxLCJhIjpbIngiXSwiYiI6WyJ5Il19'; // 확인용 가짜 신청 코드
   async function tryAdmin() {
-    if ((await sha256Hex($('adminPin').value)) === CFG.adminPinHash) { adminPin = $('adminPin').value; $('adminLock').hidden = true; $('adminBody').hidden = false; }
+    const pin = $('adminPin').value.trim();
+    $('adminErr').textContent = '';
+    let ok = false;
+    if (API) {
+      try { await api('/issue', { code: PIN_PROBE, pin }); ok = true; }
+      catch (e) { $('adminErr').textContent = e.data && e.data.error === 'pin' ? '비밀번호가 맞지 않습니다. (Cloudflare의 ADMIN_PIN 값과 같아야 해요)' : (e.message || '서버에 연결하지 못했습니다.'); return; }
+    } else ok = (await sha256Hex(pin)) === CFG.adminPinHash;
+    if (ok) { adminPin = pin; $('adminLock').hidden = true; $('adminBody').hidden = false; }
     else $('adminErr').textContent = '비밀번호가 맞지 않습니다.';
   }
   $('adminEnter').addEventListener('click', tryAdmin);
