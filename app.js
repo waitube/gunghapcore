@@ -185,7 +185,32 @@
       currentPair = { A, B, rel: currentRel };
       $('orderCode').value = currentCode;
       $('copyToast').textContent = '';
+      addSharePanel(A, B, currentRel);
     }
+  }
+  /* ---------- 공유: 결과를 본 사람이 상대·친구에게 사이트를 보내도록 (생년월일은 링크에 넣지 않음) ---------- */
+  function addSharePanel(A, B, rel) {
+    const url = siteBase() + '#' + rel;
+    const label = RELS[rel].label;
+    const text = `${label} 궁합을 사주로 봤어요. 생년월일시만 넣으면 무료로 볼 수 있어요. 당신도 한번 봐요!`;
+    const box = document.createElement('section');
+    box.className = 'panel share-panel';
+    box.innerHTML = `<h3 class="sec">이 궁합, 상대에게도 보여 주세요</h3>
+      <p class="small muted">링크에는 두 분의 생년월일이 들어가지 않아요. 받은 사람은 자기 정보로 직접 궁합을 볼 수 있어요.</p>
+      <div class="share-row">
+        <button type="button" class="btn-seal" id="shareBtn">카톡·문자로 보내기</button>
+        <button type="button" class="btn-line" id="shareCopy">링크 복사</button>
+      </div>
+      <div class="toast" id="shareToast" aria-live="polite"></div>`;
+    $('freeResult').appendChild(box);
+    const toast = $('shareToast');
+    $('shareCopy').addEventListener('click', () => copyText(text + '\n' + url, null, toast));
+    $('shareBtn').addEventListener('click', async () => {
+      if (navigator.share) {
+        try { await navigator.share({ title: '궁합코어', text, url }); return; } catch (e) { if (e && e.name === 'AbortError') return; }
+      }
+      copyText(text + '\n' + url, null, toast);
+    });
   }
   $('gunghapForm').addEventListener('submit', e => {
     e.preventDefault();

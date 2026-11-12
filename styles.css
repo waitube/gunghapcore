@@ -244,3 +244,15 @@ select{width:100%;min-width:0;padding:10px 8px;border:1px solid var(--wood);bord
 .alt-pay summary{font-size:13.5px;color:var(--ink-soft)}
 .paid-notice{border:2px solid var(--mok)}
 [hidden]{display:none!important}
+/* 결과 공유 */
+.share-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.share-row .btn-seal,.share-row .btn-line{flex:1 1 160px}
+/* 관계별 안내 페이지 */
+.guide-links{display:flex;flex-wrap:wrap;gap:6px 14px;margin:0 0 10px}
+.guide h2{font-family:var(--serif);font-size:19px;margin:26px 0 8px}
+.guide p,.guide li{font-size:15px}
+.guide .cta{display:block;text-align:center;text-decoration:none;margin:22px 0}
+.guide .faq dt{font-weight:700;margin-top:12px}
+.guide .faq dd{margin:4px 0 0}
+.share-row .btn-seal{margin-top:0;width:auto}
+.guide .panel>h2:first-child{margin-top:0}

@@ -405,7 +405,7 @@
     <section class="panel report-cover">
       <p class="eyebrow">상세 궁합 리포트 · ${esc(RELATIONS[an.rel].label)}</p>
       <h2 class="pair-title">${esc(A.name)} <span class="x">×</span> ${esc(B.name)}</h2>
-      <p class="muted small">발행일 ${issued} · 와이튜브 사주코어 엔진 · 정자시 기준</p>
+      <p class="muted small">발행일 ${issued} · 심명 사주코어 엔진 · 정자시 기준</p>
       ${tallyHTML(result)}
       <div class="key-years">
         <div><b>함께 힘이 나는 해</b><span>${goodYears.length ? goodYears.join(', ') : '10년 안에 뚜렷한 해 없음'}</span></div>

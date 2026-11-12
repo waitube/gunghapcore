@@ -1,7 +1,7 @@
 {
-  "name": "궁합코어 | 와이튜브",
+  "name": "궁합코어 | 심명",
   "short_name": "궁합코어",
-  "description": "두 사람의 사주를 8개 축으로 풀어보는 와이튜브 궁합 서비스",
+  "description": "두 사람의 사주를 8개 축으로 풀어보는 심명 궁합 서비스",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
