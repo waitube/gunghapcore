@@ -20,8 +20,8 @@
       <div><p class="brand">궁합코어</p><p class="brand-sub">와이튜브 사주코어 엔진</p></div>
     </div>
     <h1 class="hero-title">궁합은 연인끼리만<br>보는 게 아닙니다</h1>
-    <p class="lead">상사와 나, 대표와 직원, 함께 일할 동료까지. 두 사람의 생년월일시만 넣으면 누가 끌어주고 누가 받쳐 주는지, 8개 축으로 풀어 드립니다.</p>
-    <div class="rel-cloud" id="heroRels" aria-label="관계를 골라 바로 시작하기"></div>
+    <p class="lead">연인·배우자는 물론 상사, 거래처, 가족, 친구까지. 두 사람의 생년월일시만 넣으면 누가 끌어 주고 누가 받쳐 주는지 8개 축으로 풀어 드립니다.</p>
+    <div class="rel-hero" id="heroRels" aria-label="관계 묶음을 골라 바로 시작하기"></div>
     <div class="price-line">
       <span>기본 궁합 <b>무료</b></span>
       <span>상세 리포트 <b id="pReport">9,900원</b></span>
@@ -38,8 +38,11 @@
       <h2 class="sec" id="formTitle">두 사람 정보 넣기</h2>
       <form id="gunghapForm" novalidate>
         <div class="rel-pick">
-          <p class="rel-q" id="relQ">어떤 관계인가요?</p>
-          <div class="rel-chips" id="relPicker" role="radiogroup" aria-labelledby="relQ"></div>
+          <p class="rel-q"><span class="step">1</span>어떤 사이인가요?</p>
+          <div class="rel-tabs" id="relTabs" role="tablist" aria-label="관계 묶음"></div>
+          <p class="rel-q" id="relQ"><span class="step">2</span>조금 더 구체적으로 골라 주세요</p>
+          <div class="rel-opts" id="relPicker" role="radiogroup" aria-labelledby="relQ"></div>
+          <p class="rel-now" id="relNow" aria-live="polite"></p>
         </div>
         <div class="people">
           <fieldset>
@@ -140,7 +143,7 @@
       <h2 class="sec" id="faqTitle">자주 묻는 질문</h2>
       <details><summary>태어난 시각을 모르면 결과가 틀리나요?</summary><p>시각 없이도 8개 축 모두 계산됩니다. 다만 시주가 빠져 오행 분포와 용신이 조금 달라질 수 있어, 아시면 넣는 편이 더 정확합니다.</p></details>
       <details><summary>음력 생일만 알아요.</summary><p>생년월일 위의 '음력'을 누르고 음력 날짜를 그대로 넣으시면 됩니다. 윤달에 태어나셨다면 '윤달이에요'에 체크해 주세요. 한국천문연구원 기준으로 양력으로 바꿔 계산합니다.</p></details>
-      <details><summary>연인이 아니어도 궁합을 볼 수 있나요?</summary><p>네. 명리학의 궁합은 두 사람의 기운이 서로 살려 주는지, 누르는지를 보는 것이라 상사·부하직원·대표와 직원·동료·동업자·가족·친구 어떤 관계에도 쓸 수 있습니다. 관계를 고르면 그 관계에 맞는 말로 풀어 드립니다.</p></details>
+      <details><summary>연인이 아니어도 궁합을 볼 수 있나요?</summary><p>네. 명리학의 궁합은 두 사람의 기운이 서로 살려 주는지, 누르는지를 보는 것이라 상사·부하직원·동료·거래처·동업자, 부모님·자녀·형제자매·배우자 가족, 동성·이성 친구까지 어떤 관계에도 쓸 수 있습니다. 관계를 고르면 그 관계에 맞는 말로 풀어 드립니다.</p></details>
       <details><summary>점수로 궁합을 알려주지 않나요?</summary><p>축마다 성격이 다른 기운을 하나의 숫자로 뭉뚱그리지 않기 위해 '우호·중립·주의' 3단계로만 보여드립니다.</p></details>
       <details><summary>리포트는 어떻게 받나요?</summary><p>입금 확인 후 카카오톡으로 리포트 링크를 보내 드립니다. 링크는 기간 제한 없이 다시 열어볼 수 있습니다.</p></details>
       <details><summary>환불되나요?</summary><p>리포트 링크를 받기 전에는 전액 환불됩니다. 리포트를 받은 뒤에는 디지털 콘텐츠 특성상 환불이 어렵고, 입력 오류로 잘못 만들어진 경우 무료로 다시 만들어 드립니다.</p></details>

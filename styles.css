@@ -25,7 +25,7 @@
   color-scheme:dark; }
 
 *{box-sizing:border-box}
-body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.65}
+body{margin:0;word-break:keep-all;overflow-wrap:break-word;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.65}
 .wrap{max-width:640px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 a{color:var(--seal)}
 h1,h2,h3,h4{font-family:var(--serif);text-wrap:balance;margin:0}
@@ -44,24 +44,49 @@ button,.btn{font:inherit;cursor:pointer}
 .brand-sub{font-size:11.5px;color:var(--ink-soft);margin:0;letter-spacing:.08em}
 .hero-title{font-size:clamp(30px,8.4vw,44px);font-weight:900;line-height:1.22;letter-spacing:-.02em}
 .top .lead{margin:14px 0 0;font-size:15.5px;max-width:32em}
-.rel-cloud{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
-.rel-cloud button{font-family:var(--serif);font-weight:700;font-size:14px;padding:8px 13px;border-radius:999px;border:1px solid var(--seal);
-  background:var(--paper-hi);color:var(--seal);cursor:pointer}
-.rel-cloud button.work{background:var(--seal);color:var(--on-seal)}
-.rel-cloud button:hover{transform:translateY(-1px)}
+/* 첫 화면 — 세 묶음 카드 */
+.rel-hero{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:20px}
+@media (max-width:520px){.rel-hero{grid-template-columns:1fr}}
+.hero-card{display:grid;gap:6px;text-align:left;padding:14px 14px 13px;border:1px solid var(--wood);border-radius:4px;background:var(--paper-hi);
+  color:var(--ink);cursor:pointer;transition:border-color .15s,transform .15s}
+.hero-card:hover{border-color:var(--seal);transform:translateY(-1px)}
+.hc-top{display:flex;align-items:center;gap:9px}
+.hc-han{display:grid;place-items:center;flex:none;width:30px;height:30px;border-radius:4px;background:var(--seal);color:var(--on-seal);
+  font-family:var(--serif);font-weight:900;font-size:16px;transform:rotate(-4deg)}
+.hc-title{font-family:var(--serif);font-weight:900;font-size:16px}
+.hc-list{font-size:12.5px;color:var(--ink-soft);line-height:1.5}
+@media (max-width:520px){.hero-card{grid-template-columns:auto 1fr;align-items:center;column-gap:12px;padding:12px 14px}.hc-list{grid-column:2}.hc-top{display:contents}.hc-han{grid-row:1/3}}
 .price-line{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
 .price-line span{font-size:12.5px;border:1px solid var(--wood);padding:5px 10px;border-radius:2px;background:var(--paper-hi)}
 .price-line b{color:var(--seal)}
 
-/* 관계 고르기 */
-.rel-pick{margin-bottom:14px}
-.rel-q{font-family:var(--serif);font-weight:700;margin:0 0 8px}
-.rel-chips{display:flex;flex-wrap:wrap;gap:6px}
-.rel-chips input{position:absolute;opacity:0;pointer-events:none}
-.rel-chips label{margin:0;padding:7px 12px;border:1px solid var(--wood);border-radius:999px;font-size:13.5px;color:var(--ink);background:var(--paper-hi);cursor:pointer}
-.rel-chips input:checked+label{background:var(--seal);border-color:var(--seal);color:var(--on-seal);font-weight:700}
-.rel-chips input:focus-visible+label{outline:2px solid var(--seal);outline-offset:2px}
-.rel-group{font-size:11px;color:var(--ink-soft);letter-spacing:.1em;width:100%;margin:4px 0 0}
+/* 관계 고르기 — 1단계 묶음 탭, 2단계 구체적인 관계 */
+.rel-pick{margin-bottom:18px}
+.rel-q{display:flex;align-items:center;gap:8px;font-family:var(--serif);font-weight:700;font-size:15px;margin:0 0 10px}
+.rel-q+.rel-tabs{margin-bottom:18px}
+.step{display:grid;place-items:center;width:20px;height:20px;border-radius:50%;background:var(--ink);color:var(--paper);font-family:var(--sans);font-size:11px;font-weight:700}
+.rel-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.rel-tab{display:grid;justify-items:center;gap:1px;padding:12px 6px 10px;border:1px solid var(--wood);border-radius:4px;background:var(--paper-hi);color:var(--ink);cursor:pointer}
+.tab-han{font-family:var(--serif);font-weight:900;font-size:20px;line-height:1.2;color:var(--seal)}
+.tab-title{font-family:var(--serif);font-weight:700;font-size:15px}
+.tab-sub{font-size:11px;color:var(--ink-soft);text-align:center;line-height:1.35}
+.rel-tab.on{background:var(--seal);border-color:var(--seal);color:var(--on-seal)}
+.rel-tab.on .tab-han,.rel-tab.on .tab-sub{color:var(--on-seal)}
+.rel-tab.on .tab-sub{opacity:.85}
+.rel-opt-group{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+@media (max-width:520px){.rel-opt-group{grid-template-columns:repeat(2,1fr)}}
+.rel-opts input{position:absolute;opacity:0;pointer-events:none}
+.rel-opt{display:grid;align-content:start;gap:2px;margin:0;padding:10px 12px;border:1px solid var(--wood);border-radius:4px;background:var(--paper);cursor:pointer;min-width:0}
+.opt-title{font-family:var(--serif);font-weight:700;font-size:14.5px;color:var(--ink)}
+.opt-desc{font-size:11.5px;color:var(--ink-soft);line-height:1.4}
+.rel-opt:hover{border-color:var(--seal)}
+.rel-opts input:checked+.rel-opt{border:2px solid var(--seal);padding:9px 11px;background:var(--paper-hi)}
+.rel-opts input:checked+.rel-opt .opt-title{color:var(--seal)}
+.rel-opts input:checked+.rel-opt .opt-title::before{content:'✓ ';font-family:var(--sans)}
+.rel-opts input:focus-visible+.rel-opt{outline:2px solid var(--seal);outline-offset:2px}
+.rel-now{margin:12px 0 0;padding:9px 12px;border-left:3px solid var(--seal);background:var(--paper-hi);font-size:13.5px;color:var(--ink-soft)}
+.rel-now b{color:var(--ink);font-family:var(--serif)}
+.rel-now .x{color:var(--seal);padding:0 6px}
 
 /* 관계별 읽는 법 */
 .rel-panel{border:2px solid var(--seal)}

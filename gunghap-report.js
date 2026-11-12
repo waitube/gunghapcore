@@ -82,17 +82,31 @@
   /* ---------- 관계 종류 ----------
      ctx: love(연인) · work(일) · family(가족) · friend(친구)
      a/b: 입력칸 이름표, 이름을 비워 두면 그대로 이름으로 씀 */
+  // short: 고르는 칸에 크게 쓰는 이름 · label: 결과·버튼에 쓰는 이름 · desc: 고르는 칸 아래 한 줄 설명
+  // (키 이름은 이미 발급된 신청 코드·리포트 링크와 맞물려 있으니 바꾸지 마세요)
   const RELATIONS = {
-    love:    { label: '연인·부부',        ctx: 'love',   a: '나', b: '상대' },
-    some:    { label: '썸·소개팅',        ctx: 'love',   a: '나', b: '그 사람' },
-    boss:    { label: '상사와 나',        ctx: 'work',   a: '나', b: '상사' },
-    junior:  { label: '부하직원과 나',    ctx: 'work',   a: '나', b: '부하직원' },
-    ceo:     { label: '대표와 직원',      ctx: 'work',   a: '대표', b: '직원' },
-    peer:    { label: '함께 일하는 동료', ctx: 'work',   a: '나', b: '동료' },
-    partner: { label: '동업·함께 일할 사람', ctx: 'work', a: '나', b: '파트너' },
-    parent:  { label: '부모와 자녀',      ctx: 'family', a: '부모', b: '자녀' },
-    friend:  { label: '친구',             ctx: 'friend', a: '나', b: '친구' },
+    love:    { short: '연인',       label: '나와 연인',       desc: '지금 만나고 있는 사람',     ctx: 'love',   a: '나', b: '연인' },
+    spouse:  { short: '남편·아내',  label: '나와 배우자',     desc: '결혼한 배우자, 예비 신랑·신부', ctx: 'love', a: '나', b: '배우자' },
+    some:    { short: '썸·소개팅',  label: '나와 썸 상대',    desc: '알아 가는 중이거나 소개받을 사람', ctx: 'love', a: '나', b: '그 사람' },
+    boss:    { short: '상사',       label: '나와 상사',       desc: '팀장·임원 등 윗사람', ctx: 'work', a: '나', b: '상사' },
+    junior:  { short: '부하직원',   label: '나와 부하직원',   desc: '내가 이끄는 팀원·후배',     ctx: 'work',   a: '나', b: '부하직원' },
+    peer:    { short: '동료',       label: '나와 동료',       desc: '같은 팀, 비슷한 직급',       ctx: 'work',   a: '나', b: '동료' },
+    client:  { short: '거래처',     label: '나와 거래처',     desc: '고객사·협력사 담당자',       ctx: 'work',   a: '나', b: '거래처 담당자' },
+    partner: { short: '동업자',     label: '나와 동업자',     desc: '함께 사업·프로젝트 할 사람', ctx: 'work', a: '나', b: '동업자' },
+    ceo:     { short: '대표와 직원', label: '대표와 직원',    desc: '대표가 직원·채용 후보와', ctx: 'work', a: '대표', b: '직원' },
+    elder:   { short: '부모님',     label: '나와 부모님',     desc: '엄마·아빠와 나',             ctx: 'family', a: '나', b: '부모님' },
+    parent:  { short: '자녀',       label: '나와 자녀',       desc: '부모인 내가 아이와 볼 때',   ctx: 'family', a: '나', b: '자녀' },
+    sibling: { short: '형제자매',   label: '나와 형제자매',   desc: '형·누나·오빠·언니·동생',     ctx: 'family', a: '나', b: '형제자매' },
+    inlaw:   { short: '시댁·처가',  label: '나와 배우자 가족', desc: '시부모·장인장모 등',        ctx: 'family', a: '나', b: '배우자 가족' },
+    friend:  { short: '동성 친구',  label: '나와 동성 친구',  desc: '오래 알고 지낸 친구',        ctx: 'friend', a: '나', b: '친구' },
+    xfriend: { short: '이성 친구',  label: '나와 이성 친구',  desc: '연인은 아닌 편한 이성 친구', ctx: 'friend', a: '나', b: '친구' },
   };
+  // 관계 묶음 (고르는 화면 순서)
+  const REL_GROUPS = [
+    { key: 'love',   han: '緣', title: '연인',      sub: '나와 상대방', keys: ['love', 'spouse', 'some'] },
+    { key: 'work',   han: '業', title: '일',        sub: '나와 일로 만난 사람', keys: ['boss', 'junior', 'peer', 'client', 'partner', 'ceo'] },
+    { key: 'family', han: '家', title: '가족·친구', sub: '나와 가족, 나와 친구', keys: ['elder', 'parent', 'sibling', 'inlaw', 'friend', 'xfriend'] },
+  ];
 
   /* ---------- 계산 ---------- */
   function personSaju(p) {
@@ -161,9 +175,16 @@
     ceo: '대표는 방향을, 직원은 실행을 맡을 때 이 궁합의 장점이 살아납니다. 역할 경계가 흐려지는 지점을 조심하세요.',
     peer: '함께 일하는 동료는 하루 대부분을 같이 보냅니다. 업무를 나눌 때 서로의 강점이 겹치지 않게 배치하세요.',
     partner: '동업이나 공동 프로젝트를 시작하기 전에, 아래 \'조심할 해\'와 주의 축을 꼭 함께 확인하세요. 지분과 역할은 문서로 남기세요.',
-    parent: '부모와 자녀는 기대가 큰 만큼 서운함도 큽니다. 자녀가 부모를 어떻게 느끼는지 먼저 읽어 보세요.',
+    client: '거래처와는 신뢰가 곧 매출입니다. 상대가 나를 어떤 사람으로 느끼는지(아래 두 번째 줄)에 맞춰 연락 방식과 제안의 결을 정하세요.',
+    parent: '부모와 자녀는 기대가 큰 만큼 서운함도 큽니다. 자녀가 나를 어떻게 느끼는지(아래 두 번째 줄)를 먼저 읽어 보세요.',
+    elder: '가까운 만큼 말이 짧아지기 쉬운 사이입니다. 부모님이 나를 어떻게 느끼시는지(아래 두 번째 줄)를 먼저 읽어 보세요.',
+    sibling: '형제자매는 어릴 때의 서열이 어른이 되어서도 남기 쉽습니다. 누가 끌어 주고 누가 받쳐 주는지(기운의 흐름)를 보세요.',
+    inlaw: '배우자 가족과는 직접보다 배우자를 사이에 두고 맺는 관계입니다. 서로 조심할 축을 미리 알아 두면 명절이 편해집니다.',
     friend: '오래 갈 친구인지보다, 어떤 때 서로 힘이 되는지 보는 데 쓰세요.',
-    love: '', some: '',
+    xfriend: '편한 친구로 오래 갈지, 감정이 섞이기 쉬운지를 두 사람이 서로를 어떻게 느끼는지에서 읽어 보세요.',
+    love: '서로에게 어떤 사람으로 다가오는지, 두 줄을 나란히 읽어 보세요. 한쪽만 맞춰 주는 관계인지가 보입니다.',
+    spouse: '함께 살아가는 사이에서는 기운의 흐름(누가 살려 주고 누가 이끄는지)이 생활 습관으로 드러납니다.',
+    some: '첫인상보다 오래 만났을 때의 결이 중요합니다. 상대가 나를 어떻게 느끼는지(아래 두 번째 줄)를 먼저 보세요.',
   };
   function relationReading(an) {
     const { A, B, result, rel, ctx } = an;
@@ -402,5 +423,5 @@
     <section class="panel note-panel"><p class="small">이 리포트는 명리학 이론(오행 상생상극·십신·12운성·합충·용신)에 따른 참고용 해설이며, 두 사람 관계의 결과를 보장하지 않습니다. 실제 관계는 서로의 대화와 노력이 가장 중요합니다.</p></section>`;
   }
 
-  root.GunghapReport = { RELATIONS, toKST, encodeOrder, decodeOrder, unlockKey, analyze, renderFree, renderFull, won, esc };
+  root.GunghapReport = { RELATIONS, REL_GROUPS, toKST, encodeOrder, decodeOrder, unlockKey, analyze, renderFree, renderFull, won, esc };
 })(typeof window !== 'undefined' ? window : globalThis);

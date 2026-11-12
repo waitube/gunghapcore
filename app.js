@@ -127,24 +127,46 @@
   /* ---------- 관계 고르기 ---------- */
   const RELS = R.RELATIONS;
   let currentRel = 'love';
-  const GROUPS = [['연인', ['love', 'some']], ['일', ['boss', 'junior', 'ceo', 'peer', 'partner']], ['가족·친구', ['parent', 'friend']]];
-  $('relPicker').innerHTML = GROUPS.map(([g, keys]) => `<p class="rel-group">${g}</p>` + keys.map(k =>
-    `<input type="radio" name="rel" id="rel-${k}" value="${k}"${k === currentRel ? ' checked' : ''}><label for="rel-${k}">${RELS[k].label}</label>`).join('')).join('');
-  const HERO = ['boss', 'junior', 'ceo', 'peer', 'partner', 'love', 'parent'];
-  $('heroRels').innerHTML = HERO.map(k => `<button type="button" data-rel="${k}" class="${RELS[k].ctx === 'work' ? 'work' : ''}">${RELS[k].label}</button>`).join('');
+  const GROUPS = R.REL_GROUPS;
+  const groupOf = k => GROUPS.find(g => g.keys.includes(k));
+  const lastInGroup = {}; // 묶음마다 마지막으로 고른 관계 기억
+  // 1단계: 묶음 탭 (연인 / 일 / 가족·친구)
+  $('relTabs').innerHTML = GROUPS.map(g =>
+    `<button type="button" role="tab" class="rel-tab" id="tab-${g.key}" data-group="${g.key}" aria-controls="opts-${g.key}">
+      <span class="tab-han" aria-hidden="true">${g.han}</span><span class="tab-title">${g.title}</span><span class="tab-sub">${g.sub}</span></button>`).join('');
+  // 2단계: 묶음 안의 구체적인 관계
+  $('relPicker').innerHTML = GROUPS.map(g => `<div class="rel-opt-group" id="opts-${g.key}" role="tabpanel" aria-labelledby="tab-${g.key}">` +
+    g.keys.map(k => `<input type="radio" name="rel" id="rel-${k}" value="${k}">
+      <label for="rel-${k}" class="rel-opt"><span class="opt-title">${R.esc(RELS[k].short)}</span><span class="opt-desc">${R.esc(RELS[k].desc)}</span></label>`).join('') + '</div>').join('');
+  // 첫 화면: 세 묶음 카드
+  $('heroRels').innerHTML = GROUPS.map(g =>
+    `<button type="button" class="hero-card hero-${g.key}" data-group="${g.key}">
+      <span class="hc-top"><span class="hc-han" aria-hidden="true">${g.han}</span><span class="hc-title">${g.title} 궁합</span></span>
+      <span class="hc-list">${g.keys.map(k => R.esc(RELS[k].short)).join(' · ')}</span></button>`).join('');
   function setRel(k, scroll) {
     if (!RELS[k]) return;
     currentRel = k;
+    const g = groupOf(k);
+    lastInGroup[g.key] = k;
     $('rel-' + k).checked = true;
+    GROUPS.forEach(x => {
+      const on = x.key === g.key;
+      $('tab-' + x.key).setAttribute('aria-selected', on);
+      $('tab-' + x.key).classList.toggle('on', on);
+      $('opts-' + x.key).hidden = !on;
+    });
+    $('relNow').innerHTML = `<b>${R.esc(RELS[k].a)}</b><span class="x">×</span><b>${R.esc(RELS[k].b)}</b> 궁합을 봅니다`;
     $('legendA').textContent = RELS[k].a;
     $('legendB').textContent = RELS[k].b;
-    $('nameA').placeholder = `이름 또는 별명 (비우면 '${RELS[k].a}')`;
-    $('nameB').placeholder = `이름 또는 별명 (비우면 '${RELS[k].b}')`;
+    $('nameA').placeholder = `비워 두면 '${RELS[k].a}'`;
+    $('nameB').placeholder = `비워 두면 '${RELS[k].b}'`;
     $('goBtn').textContent = `${RELS[k].label} 궁합 무료로 보기`;
     if (scroll) $('formTitle').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
+  const setGroup = (gk, scroll) => setRel(lastInGroup[gk] || GROUPS.find(g => g.key === gk).keys[0], scroll);
   document.querySelectorAll('input[name="rel"]').forEach(r => r.addEventListener('change', () => setRel(r.value)));
-  document.querySelectorAll('#heroRels button').forEach(b => b.addEventListener('click', () => setRel(b.dataset.rel, true)));
+  document.querySelectorAll('#relTabs .rel-tab').forEach(b => b.addEventListener('click', () => setGroup(b.dataset.group)));
+  document.querySelectorAll('#heroRels .hero-card').forEach(b => b.addEventListener('click', () => setGroup(b.dataset.group, true)));
   setRel(currentRel);
   function readPerson(s, fallbackName) {
     const r = readDate(s);
@@ -442,6 +464,7 @@
     if (h && h.includes('.') && h.length > 20) return showReport(h);
     // #boss, #ceo 처럼 관계 이름을 붙인 주소로 들어오면 그 관계를 골라 둔 채 시작 (인스타·블로그 링크용)
     if (RELS[h]) setRel(h);
+    else if (GROUPS.some(g => g.key === h)) setGroup(h); // #work, #family 처럼 묶음 이름도 받음
     showSample();
   }
   function showSample() {
