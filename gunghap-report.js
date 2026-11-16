@@ -423,5 +423,5 @@
     <section class="panel note-panel"><p class="small">이 리포트는 명리학 이론(오행 상생상극·십신·12운성·합충·용신)에 따른 참고용 해설이며, 두 사람 관계의 결과를 보장하지 않습니다. 실제 관계는 서로의 대화와 노력이 가장 중요합니다.</p></section>`;
   }
 
-  root.GunghapReport = { RELATIONS, REL_GROUPS, toKST, encodeOrder, decodeOrder, unlockKey, analyze, renderFree, renderFull, won, esc };
+  root.GunghapReport = { relationReading, RELATIONS, REL_GROUPS, toKST, encodeOrder, decodeOrder, unlockKey, analyze, renderFree, renderFull, won, esc };
 })(typeof window !== 'undefined' ? window : globalThis);
