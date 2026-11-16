@@ -256,3 +256,19 @@ select{width:100%;min-width:0;padding:10px 8px;border:1px solid var(--wood);bord
 .guide .faq dd{margin:4px 0 0}
 .share-row .btn-seal{margin-top:0;width:auto}
 .guide .panel>h2:first-child{margin-top:0}
+
+/* ===== 미드나잇 테마 (2026-11 리뉴얼: 남색 + 네온 그린 + 보라) — <html data-theme="midnight"> ===== */
+:root[data-theme="midnight"]{
+  --paper:#0A0F24; --paper-deep:#121833; --paper-hi:#161D3D;
+  --ink:#F4F6FF; --ink-soft:#B8BEDA; --wood:#2A3150;
+  --seal:#39FF14; --seal-dark:#2ED10F; --on-seal:#051004;
+  --mok:#34D399; --hwa:#F87171; --to:#FBBF24; --geum:#E5E7EB; --su:#60A5FA;
+  --good-bg:rgba(57,255,20,.12); --care-bg:rgba(255,122,89,.14); --lean-bg:rgba(138,43,226,.18);
+  --serif:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  color-scheme:dark; }
+:root[data-theme="midnight"] body{background:radial-gradient(circle at 0 0,rgba(57,255,20,.07),transparent 40%),radial-gradient(circle at 100% 45%,rgba(138,43,226,.16),transparent 45%),var(--paper);background-attachment:fixed}
+:root[data-theme="midnight"] .panel{background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.09);border-radius:20px}
+:root[data-theme="midnight"] .btn-seal{border-radius:16px;box-shadow:0 0 20px rgba(57,255,20,.35);font-weight:900}
+:root[data-theme="midnight"] .brand{color:var(--seal);text-shadow:0 0 12px rgba(57,255,20,.5)}
+:root[data-theme="midnight"] input,:root[data-theme="midnight"] select,:root[data-theme="midnight"] textarea{background:rgba(0,0,0,.3);color:var(--ink);border-color:rgba(255,255,255,.12)}
+:root[data-theme="midnight"] .chip,:root[data-theme="midnight"] .tier-badge{color:#0A0F24}

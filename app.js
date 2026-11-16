@@ -487,6 +487,8 @@
     if (h === 'admin') return showAdmin();
     if (h === 'terms' || h === 'privacy') { showSample(); return showPolicy(h); }
     if (h && h.includes('.') && h.length > 20) return showReport(h);
+    // 기본 화면은 새 디자인 메인(index.html)으로 보냄 — 이 페이지는 결제 확인·리포트·운영자·약관 전용
+    if (/classic\.html$/.test(location.pathname)) { location.replace('./' + location.hash); return; }
     // #boss, #ceo 처럼 관계 이름을 붙인 주소로 들어오면 그 관계를 골라 둔 채 시작 (인스타·블로그 링크용)
     if (RELS[h]) setRel(h);
     else if (GROUPS.some(g => g.key === h)) setGroup(h); // #work, #family 처럼 묶음 이름도 받음
