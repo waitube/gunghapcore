@@ -283,3 +283,6 @@ select{width:100%;min-width:0;padding:10px 8px;border:1px solid var(--wood);bord
 .word-to p{margin:6px 0 0}
 .near-yr{padding:12px 0;border-bottom:1px solid var(--wood)}
 .near-yr h4{font-size:15px;margin-bottom:6px}.near-yr p{margin:4px 0;font-size:13.5px}
+.word-to p.say{margin-top:8px;color:var(--seal);font-weight:500}
+.scene{padding:14px;border-radius:12px;background:var(--care-bg);margin-bottom:10px;font-size:13.5px}
+.scene h4{font-size:14.5px;margin-bottom:6px}.scene p{margin:4px 0;line-height:1.7}.scene b{margin-right:6px}

@@ -352,9 +352,95 @@
       <dt>갈등할 때</dt><dd>${esc(pr.clash)}</dd>
       <dt>회복하는 법</dt><dd>${esc(pr.recover)}</dd></dl></div>`;
   }
-  function wordToHTML(from, to) {
-    const pr = ELEM_PROFILE[STEM_ELEM[to.saju.day.stem]];
-    return `<div class="word-to"><b>${esc(iGa(from.name))} ${esc(to.name)}에게</b><p>${esc(eunNeun(to.name))} ${esc(pr.want)} 가장 힘이 납니다. 반대로 ${esc(pr.hurt)} 쉽게 상처받으니, 그런 상황에서는 한 박자 쉬고 말해 주세요.</p></div>`;
+  // 서로에게 건네는 한마디: 보내는 쪽→받는 쪽 방향, 받는 쪽 용신, 관계 종류에 따라 달라짐
+  const SAY_EXAMPLE = {
+    personal: {
+      '목': '"네가 하려는 거 좋은 생각이다. 어떻게 해 볼 생각이야?"',
+      '화': '"오늘 진짜 고마웠어. 덕분에 분위기가 확 살았어."',
+      '토': '"지난번에 말한 거 기억하고 있어. 이번에도 꼭 지킬게."',
+      '금': '"결론부터 말하면 이렇고, 이유는 두 가지야."',
+      '수': '"천천히 생각해 보고 편할 때 얘기해 줘. 기다릴게."',
+    },
+    work: {
+      '목': '"이 방향 좋네요. 다음 단계는 어떻게 보세요?"',
+      '화': '"이번 건은 덕분에 잘 풀렸습니다. 회의 때 말씀드릴게요."',
+      '토': '"말씀하신 일정 그대로 맞추겠습니다. 변동 생기면 바로 알려 드릴게요."',
+      '금': '"결론부터 말씀드리면 A안이고, 근거는 두 가지입니다."',
+      '수': '"자료 먼저 보내 드릴게요. 검토하시고 편하실 때 의견 주세요."',
+    },
+  };
+  const STAGE_SHORT = { '장생': '새로운 가능성을 열어 주는', '목욕': '설레지만 아직 서로 탐색 중인', '관대': '예의를 갖춰 존중해 주는', '건록': '든든하게 받쳐 주는', '제왕': '존재감이 강하게 느껴지는', '쇠': '편안하고 익숙한', '병': '마음을 흔들기 쉬운', '사': '조금 거리감이 느껴지는', '묘': '무던하고 잔잔한', '절': '연결이 느슨하게 느껴지는', '태': '조심스럽게 가까워지는', '양': '기대고 싶어지게 하는' };
+  function wordToHTML(from, to, ctx) {
+    const ef = STEM_ELEM[from.saju.day.stem], et = STEM_ELEM[to.saju.day.stem];
+    const pr = ELEM_PROFILE[et];
+    const cat = GC.pairRelation(ef, et);
+    const F = from.name, T = to.name;
+    const dir = {
+      bihwa: `두 사람 모두 ${ef} 기운이라 갈등이 생기면 같은 방식으로 맞서기 쉽습니다. ${iGa(F)} 먼저 한 걸음 물러나 "네 생각은 어때?" 하고 물어 주면 평행선이 풀립니다.`,
+      aGenB: `${F}의 기운이 ${eulReul(T)} 살려 주는 쪽이라, ${iGa(F)} 먼저 챙기는 일이 많아집니다. 지치지 않도록 ${F}도 바라는 것을 솔직하게 말해 두세요.`,
+      bGenA: `${T}의 기운이 ${F}에게 힘이 되는 쪽입니다. 받기만 한다고 느끼지 않도록 ${iGa(F)} 고마움을 자주 말로 전해 주세요.`,
+      aCtrlB: `${F}의 기운이 ${eulReul(T)} 누르는 쪽이라, ${F}의 말은 생각보다 세게 들립니다. 지적보다 질문으로, 결론보다 이유를 먼저 말해 주세요.`,
+      bCtrlA: `${T}의 기운이 ${eulReul(F)} 누르는 쪽이라 ${iGa(F)} 위축되기 쉽습니다. 참고 넘기기보다 불편한 점을 작을 때 차분히 꺼내는 편이 오히려 관계를 지킵니다.`,
+    }[cat];
+    const stage = SC.twelveStage(to.saju.day.stem, from.saju.day.branch);
+    const strong = ['장생', '관대', '건록', '제왕'].includes(stage);
+    const feel = `${eunNeun(F)} ${T}에게 '${stage}'의 기운, 곧 ${STAGE_SHORT[stage]} 사람으로 다가갑니다. ` + (strong ? '이 장점을 살려 중요한 순간에 곁에 있어 주세요.' : `그만큼 ${iGa(F)} 마음을 조금 더 분명하게 표현해야 ${T}에게 전해집니다.`);
+    const yong = (ctx === 'work' ? ELEM_CARE_WORK : ELEM_CARE)[to.ys.yongsin];
+    const say = SAY_EXAMPLE[ctx === 'work' ? 'work' : 'personal'][to.ys.yongsin];
+    return `<div class="word-to"><b>${esc(iGa(F))} ${esc(T)}에게</b>
+      <p>${esc(dir)}</p>
+      <p>${esc(feel)}</p>
+      <p>${ef === et ? esc(`${T}도 ${F}처럼 ${pr.want} 힘이 나는 사람입니다. 내가 바라는 방식 그대로 먼저 해 주면 됩니다.`) : esc(`${eunNeun(T)} ${pr.want} 힘이 나고, ${pr.hurt} 쉽게 상처받습니다.`)} 특히 ${esc(T)}에게 필요한 기운(용신 ${to.ys.yongsin})으로 보면, ${esc(yong.talk)}</p>
+      <p class="say">이렇게 말해 보세요 · ${esc(say)}</p></div>`;
+  }
+
+  // 구체적 상황 예시: 주의(부족하면 중립) 축마다 장면 · 이유 · 푸는 법
+  const SCENES = {
+    cheongan: {
+      work: (a, b) => ['회의에서 한 사람이 방향을 정해 버리고 다른 사람은 말없이 따르다가, 나중에 "그건 아니었다"는 말이 나옵니다.', '한쪽 기운이 다른 쪽을 누르는 구도라, 의견을 낼 타이밍을 놓치기 쉽습니다.', '결정 전에 "반대 의견 있어요?"를 꼭 한 번 묻고, 의견은 회의 전에 메모로 먼저 받아 두세요.'],
+      personal: (a, b) => ['주말 계획을 한 사람이 다 정하고, 다른 사람은 따라가다가 "나는 한 번도 고른 적이 없다"며 서운함이 터집니다.', '주도하는 쪽은 배려라고 생각하지만, 상대는 선택권이 없다고 느끼기 쉬운 구도입니다.', '번갈아 고르는 규칙을 정하세요. 이번 주는 한 사람, 다음 주는 다른 사람이 정하는 식입니다.'],
+    },
+    sibsinIlgan: {
+      work: (a, b) => ['성과를 보고할 때 누가 더 기여했는지를 두고 은근한 신경전이 생깁니다.', '서로를 협력자보다 경쟁자로 느끼기 쉬운 십신 관계입니다.', '일을 시작할 때 역할과 공(功)의 기준을 문서로 정해 두면 다툼이 크게 줄어듭니다.'],
+      personal: (a, b) => ['한 사람은 "당연히 해 줄 줄 알았다", 다른 사람은 "말을 안 했잖아"로 같은 일을 두고 서운해합니다.', '서로에게 기대하는 역할이 달라서 생기는 오해입니다.', '한 달에 한 번, 서로 바라는 것을 하나씩 말하는 시간을 정해 두세요.'],
+    },
+    complement: {
+      work: (a, b) => ['일이 몰리는 시기에 한 사람만 야근하고, 다른 사람은 그걸 모른 채 지나갑니다.', '한쪽의 약한 기운이 관계 안에서 계속 소모되는 구도입니다.', '주간 업무를 함께 펼쳐 보고 한 사람에게 몰린 일을 다시 나누세요.'],
+      personal: (a, b) => ['집안일이나 연락, 약속 잡기를 늘 한 사람이 챙기다가 어느 날 "나만 애쓴다"는 말이 나옵니다.', '부족한 기운을 채워 주지 못하고 한쪽이 더 소모되는 조합입니다.', '챙기는 일을 목록으로 적고 반씩 나누세요. 눈에 보이면 서운함이 줄어듭니다.'],
+    },
+    effect: {
+      work: (a, b) => ['마감 직전 지친 상태에서 나눈 짧은 대화가 큰 언쟁으로 번집니다.', '상대의 기운이 나의 균형을 흔드는 쪽이라, 컨디션이 나쁠 때 특히 예민해집니다.', '중요한 논의는 오전이나 일이 한가한 시간에 잡고, 지친 날은 "내일 이야기해요"로 미루세요.'],
+      personal: (a, b) => ['피곤한 저녁에 꺼낸 돈 이야기나 집안 이야기가 말다툼으로 끝납니다.', '함께 있을 때 쉽게 지치는 기운 관계라, 피로가 갈등의 방아쇠가 됩니다.', '무거운 이야기는 쉬는 날 낮에, 밥을 먹은 뒤에 꺼내세요.'],
+    },
+    twelveStage: {
+      work: (a, b) => ['메신저 답이 늦거나 짧아서 "나를 무시하나" 하는 오해가 생깁니다.', '서로에게 닿는 기운이 약해 거리감이 생기기 쉬운 관계입니다.', '연락 방식(급한 일은 전화, 나머지는 메신저)과 답장 기대 시간을 미리 정해 두세요.'],
+      personal: (a, b) => ['연락 횟수가 줄면서 한 사람이 "마음이 식었나" 걱정합니다.', '열정보다 안정 쪽으로 흐르는 기운이라 표현이 줄어들기 쉽습니다.', '하루 한 번 짧은 안부처럼 작은 연락 루틴을 정해 두세요.'],
+    },
+    sibsinYeongan: {
+      work: (a, b) => ['다른 동료나 윗사람이 "두 사람 사이 안 좋다며?"라고 말을 전해 옵니다.', '주변 사람들 눈에 두 사람이 어울리지 않아 보이기 쉬운 관계입니다.', '들은 말은 그대로 믿지 말고 당사자끼리 직접 확인하세요. 공개 자리에서는 서로를 먼저 인정해 주세요.'],
+      personal: (a, b) => ['가족이나 친구가 상대를 두고 한마디 하면서 둘 사이가 어색해집니다.', '주변 시선에 관계가 흔들리기 쉬운 인연입니다.', '"우리 일은 우리끼리 정한다"는 원칙을 정하고, 주변 이야기는 둘이 먼저 상의하세요.'],
+    },
+    napeum: {
+      work: (a, b) => ['늘 한 사람이 상대 일정과 방식에 맞춰 주다가 어느 순간 지쳐 버립니다.', '타고난 바탕에서 한쪽의 영향력이 더 크게 작용합니다.', '분기마다 한 번은 맞춰 주던 쪽이 방식을 정하도록 순서를 바꾸세요.'],
+      personal: (a, b) => ['메뉴, 여행지, 생활 방식이 늘 한 사람 취향으로 정해집니다.', '의식하지 못한 채 한쪽만 맞춰 주기 쉬운 바탕입니다.', '"이번엔 네가 골라" 하는 날을 일부러 만들어 주세요.'],
+    },
+    dayPillar: {
+      work: (a, b) => ['일하는 시간대와 처리 순서가 달라 같은 일을 두 번 하거나 일정이 꼬입니다.', '생활 리듬과 일하는 방식이 부딪히기 쉬운 일주 관계입니다.', '공용 일정표를 쓰고, 일의 마감과 중간 점검 시점을 함께 정하세요.'],
+      personal: (a, b) => ['자는 시간, 정리 습관, 돈 쓰는 방식 같은 사소한 차이로 자주 부딪힙니다.', '생활 패턴이 충돌하기 쉬운 일주 관계입니다.', '서로 절대 양보 못 하는 것 한 가지씩만 정하고, 나머지는 한쪽 방식으로 통일하세요.'],
+    },
+  };
+  function scenesHTML(an) {
+    const all = an.result.axes.concat(an.result.auxAxes);
+    let pick = all.filter(x => x.tier === '주의');
+    if (pick.length < 3) pick = pick.concat(all.filter(x => x.tier === '중립').slice(0, 3 - pick.length));
+    if (!pick.length) return '<p class="small">8개 축 모두 우호적이라 크게 부딪힐 장면이 드문 조합입니다. 다만 편할수록 표현이 줄기 쉬우니, 고마운 일은 그때그때 말해 주세요.</p>';
+    const k = an.ctx === 'work' ? 'work' : 'personal';
+    const AXN = { cheongan: '기본 기질', sibsinIlgan: '마주할 때', complement: '빈자리 채움', effect: '서로의 힘', twelveStage: '다가오는 기운', sibsinYeongan: '주변의 시선', napeum: '타고난 바탕', dayPillar: '생활 리듬' };
+    return pick.slice(0, 4).map((ax, i) => {
+      const [scene, why, fix] = SCENES[ax.key][k](an.A.name, an.B.name);
+      return `<div class="scene"><h4>상황 ${i + 1} <span class="tag">${AXN[ax.key]} · ${ax.tier}</span></h4>
+        <p><b>이런 장면</b> ${esc(scene)}</p><p><b>왜 생기나</b> ${esc(why)}</p><p><b>이렇게 풀어요</b> ${esc(fix)}</p></div>`;
+    }).join('');
   }
   const YEAR_GROUP_TEXT = {
     '비겁': '자기 주장과 독립심이 강해지는 해입니다. 상대와 주도권이 부딪히지 않게 역할을 나눠 두세요.',
@@ -516,7 +602,10 @@
       <div class="persons">${profileHTML(A)}${profileHTML(B)}</div>
       <p class="narr">${esc(strengthPairText(A, B))}</p>
       <h4 class="sub-h">서로에게 건네는 한마디</h4>
-      <div class="persons">${wordToHTML(A, B)}${wordToHTML(B, A)}</div></section>
+      <div class="persons">${wordToHTML(A, B, an.ctx)}${wordToHTML(B, A, an.ctx)}</div>
+      <h4 class="sub-h">이런 상황, 이렇게 풀어 보세요</h4>
+      <p class="small">두 사람 궁합에서 주의·중립으로 나온 축을 실제로 겪기 쉬운 장면으로 옮겼습니다.</p>
+      ${scenesHTML(an)}</section>
     <section class="panel"><h3 class="sec">3. 핵심 6축 풀이</h3><div class="axis-list">${result.axes.map(a => axisCard(a, false)).join('')}</div></section>
     <section class="panel"><h3 class="sec">4. 보조 전통기법 2종</h3><div class="axis-list">${result.auxAxes.map(a => axisCard(a, false)).join('')}</div></section>
     <section class="panel"><h3 class="sec">5. 올해와 내년, 각자의 기운</h3>
