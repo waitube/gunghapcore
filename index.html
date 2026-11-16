@@ -693,7 +693,7 @@ select.inp option{background:var(--sheet)}
               <span class="tier tier-${a.tier}">${a.tier}</span>
               ${open ? '<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>' : '<span class="lk" aria-label="상세 리포트에서 공개">🔒</span>'}
             </button>
-            ${open ? `<div class="ax-body">${a.stemsText?`<b style="color:var(--ink)">${esc(a.stemsText)}</b>\n`:''}${esc(fixNa(a.text))}</div>` : ''}
+            ${open ? `<div class="ax-body">${a.stemsText?`<b style="color:var(--ink)">${esc(a.stemsText)}</b>\n`:''}${esc(fixNa(a.text))}${R.axisGuide && R.axisGuide(a) ? `\n\n<b style="color:var(--neon)">이렇게 해 보세요</b> ${esc(R.axisGuide(a))}` : ''}</div>` : ''}
           </div>`; }).join('')}</div>
       </div>
 

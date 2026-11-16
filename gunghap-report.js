@@ -281,6 +281,94 @@
     '수': { act: '1:1 대화, 자료 공유, 충분한 검토 시간', place: '조용한 카페나 회의실', talk: '충분히 들어주고 생각할 시간을 줄 때 힘이 납니다.' },
   };
 
+
+  /* ---------- 리포트 보강 (2026-11): 축별 실천 조언 · 성향 비교 · 올해/내년 각자의 기운 ---------- */
+  const AXIS_GUIDE = {
+    cheongan: {
+      '우호': '기본 기질이 서로를 살리는 방향이라, 큰 설명 없이도 통하는 부분이 많습니다. 다만 편하다고 말을 줄이면 "알아서 해 주겠지" 하는 기대가 쌓이기 쉬우니, 고마운 일은 그때그때 말로 표현해 두세요.',
+      '중립': '같은 기운끼리라 생각과 속도가 비슷합니다. 손발은 잘 맞지만 둘이 같은 방향으로 고집을 부리면 멈춰 줄 사람이 없습니다. 중요한 결정은 한 사람이 정리하고 다른 한 사람이 검토하는 식으로 역할을 나눠 두세요.',
+      '주의': '한쪽 기운이 다른 쪽을 누르는 구도라, 같은 말도 지시나 간섭으로 들리기 쉽습니다. 누르는 쪽은 결론보다 이유를 먼저 말하고, 눌리는 쪽은 불편함을 쌓아 두지 말고 작을 때 꺼내는 것이 관계를 오래 가게 합니다.',
+    },
+    sibsinIlgan: {
+      '우호': '마주할 때 자연스럽게 편안함이나 실속을 느끼는 사이입니다. 이 장점은 함께 보내는 시간이 쌓일수록 커지니, 정기적으로 마주 앉는 자리(식사, 1:1 대화)를 만들어 두면 좋습니다.',
+      '중립': '서로에게 크게 부담도, 크게 기대도 없는 담백한 사이입니다. 관계가 깊어지려면 상대가 무엇을 중요하게 여기는지 한 번쯤 직접 물어보는 과정이 필요합니다.',
+      '주의': '한쪽이 상대를 경쟁자나 압박으로 느끼기 쉬운 사이입니다. 서운함은 대개 "기대했던 역할"과 "실제 행동"의 차이에서 생기니, 서로에게 바라는 역할을 처음부터 말로 맞춰 두세요.',
+    },
+    complement: {
+      '우호': '서로에게 부족한 기운을 채워 주는 보완형입니다. 상대가 잘하는 영역은 과감히 맡기고, 내가 약한 부분을 상대에게서 배우는 자세가 이 궁합의 힘을 가장 크게 끌어냅니다.',
+      '중립': '서로의 약점을 크게 채워 주지도, 크게 건드리지도 않습니다. 각자 부족한 부분은 관계 밖에서 채우는 편이 낫고, 둘이 함께할 때는 이미 잘 맞는 부분에 집중하세요.',
+      '주의': '한쪽의 약한 기운이 관계 안에서 더 소모되기 쉬운 구도입니다. 지치는 쪽이 생기기 전에 쉬는 시간과 각자의 공간을 확보하고, 한 사람에게 일이나 감정 노동이 몰리지 않게 살펴 주세요.',
+    },
+    effect: {
+      '우호': '상대의 기운이 나에게 꼭 필요한 기운(용신·희신)에 해당합니다. 함께 있을 때 일이 잘 풀리거나 마음이 안정되는 경험이 많을 것이니, 중요한 시기에는 서로 의견을 구하는 습관을 들이세요.',
+      '중립': '상대가 내 기운의 균형에 직접 큰 영향을 주지는 않습니다. 좋고 나쁨보다는 서로의 일상 리듬을 존중하며 적당한 거리에서 함께하는 것이 편안합니다.',
+      '주의': '상대의 기운이 나의 균형을 흔드는 쪽(병신)에 해당합니다. 상대가 나쁜 사람이라는 뜻이 아니라 함께 있을 때 쉽게 지칠 수 있다는 뜻입니다. 피곤할 때는 중요한 대화를 미루고 컨디션이 좋을 때 이야기하는 것만으로도 충돌이 크게 줄어듭니다.',
+    },
+    twelveStage: {
+      '우호': '상대가 나에게 생기와 추진력을 주는 기운으로 다가옵니다. 새로운 일을 시작하거나 결심이 필요할 때 이 사람과 함께하면 힘을 얻기 쉽습니다.',
+      '중립': '상대가 다가오는 기운이 차분하거나 잔잔한 편입니다. 열정보다는 익숙함과 안정이 쌓이는 관계라, 가끔은 새로운 경험을 함께 만들어 관계에 활력을 더해 주세요.',
+      '주의': '기운이 약하게 닿아 거리감이 생기기 쉽습니다. 연락의 빈도와 방식을 미리 정해 두면 오해가 크게 줄어듭니다.',
+    },
+    sibsinYeongan: {
+      '우호': '주변 사람들 눈에도 두 사람은 잘 어울리는 조합으로 비칩니다. 가족·동료 등 주변의 지지를 받기 쉬우니, 함께하는 모습을 숨기기보다 드러내는 편이 관계에 도움이 됩니다.',
+      '중립': '주변에서는 두 사람의 관계를 무난하게 봅니다. 외부 시선에 휘둘릴 일은 적으니, 두 사람끼리의 약속과 기준을 잘 세우는 데 집중하세요.',
+      '주의': '주변 사람들 눈에는 두 사람이 부딪히거나 어울리지 않아 보일 수 있습니다. 제3자의 말에 관계가 흔들리지 않도록, 중요한 이야기는 둘이 직접 확인하는 원칙을 지켜 주세요.',
+    },
+    napeum: {
+      '우호': '겉으로 드러나지 않는 타고난 바탕에서 서로를 밀어 주는 인연입니다. 시간이 갈수록 "이 사람이 편하다"는 느낌이 깊어지는 유형입니다.',
+      '중립': '타고난 바탕이 비슷하거나 서로 무던한 사이입니다. 깊은 곳에서 통하지만 자극이 적을 수 있어, 서로의 새로운 면을 발견할 기회를 일부러 만들어 보세요.',
+      '주의': '타고난 바탕에서 한쪽의 영향력이 더 크게 작용합니다. 의식하지 못한 채 한쪽만 맞춰 주는 일이 많아질 수 있으니, 가끔은 맞춰 주던 쪽이 선택권을 갖도록 순서를 바꿔 보세요.',
+    },
+    dayPillar: {
+      '우호': '일상의 리듬과 생활 방식이 잘 맞물리는 사이입니다. 함께 지내거나 일할 때 사소한 마찰이 적어 오래 가는 관계에 유리합니다.',
+      '중립': '생활 리듬이 크게 부딪히지도, 딱 맞지도 않습니다. 시간 약속, 연락 방식, 일 처리 순서 같은 생활 습관을 한 번 맞춰 두면 훨씬 편해집니다.',
+      '주의': '생활 패턴이나 가치관이 부딪히기 쉬운 사이입니다. 이사·이직·여행처럼 환경이 바뀌는 시기에 충돌이 커지기 쉬우니, 그런 때일수록 일정과 역할을 미리 상의해 두세요.',
+    },
+  };
+  function axisGuide(axis) { return (AXIS_GUIDE[axis.key] || {})[axis.tier] || ''; }
+
+  // 일간 오행별 성향 (대화·좋아하는 것·상처·갈등 반응·회복)
+  const ELEM_PROFILE = {
+    '목': { kw: ['성장', '계획', '곧음'], talk: '앞으로의 계획과 가능성을 이야기할 때 말이 많아집니다.', want: '자신의 성장과 노력을 알아봐 줄 때', hurt: '하려는 일을 가로막거나 무시당할 때', clash: '갈등이 생기면 원칙을 내세워 정면으로 부딪히는 편입니다.', recover: '산책이나 새로운 배움으로 기운을 회복합니다.' },
+    '화': { kw: ['열정', '표현', '속도'], talk: '감정과 생각을 바로바로 표현하고 반응이 빠릅니다.', want: '칭찬과 관심을 바로 표현해 줄 때', hurt: '무반응이나 냉담한 태도를 마주할 때', clash: '화가 나면 크게 표현하지만 금방 풀리는 편입니다.', recover: '사람을 만나거나 몸을 움직이며 기운을 회복합니다.' },
+    '토': { kw: ['신뢰', '중재', '안정'], talk: '말수는 적어도 한 번 한 말은 지키려 합니다.', want: '약속을 지키고 꾸준히 곁에 있어 줄 때', hurt: '갑작스러운 변화나 약속이 깨질 때', clash: '갈등이 생기면 참고 쌓아 두다가 한 번에 터질 수 있습니다.', recover: '익숙한 공간에서 쉬며 기운을 회복합니다.' },
+    '금': { kw: ['원칙', '결단', '정리'], talk: '분명하고 간결한 말을 좋아하고, 돌려 말하는 것을 답답해합니다.', want: '근거를 들어 솔직하게 말해 줄 때', hurt: '애매한 태도나 약속을 흐지부지할 때', clash: '갈등이 생기면 선을 긋고 거리를 두는 편입니다.', recover: '혼자 정리하는 시간을 가지며 기운을 회복합니다.' },
+    '수': { kw: ['지혜', '유연', '깊이'], talk: '충분히 생각한 뒤 말하고, 깊은 대화를 좋아합니다.', want: '끝까지 들어주고 생각할 시간을 줄 때', hurt: '재촉받거나 속마음을 함부로 단정당할 때', clash: '갈등이 생기면 말을 아끼고 속으로 삭이는 편입니다.', recover: '혼자만의 시간이나 물가 산책으로 기운을 회복합니다.' },
+  };
+  function strengthPairText(A, B) {
+    const a = A.ys.isStrong, b = B.ys.isStrong;
+    if (a && b) return '두 사람 모두 자기 주관이 뚜렷한 신강 사주입니다. 각자 판단력이 좋아 믿고 맡길 수 있지만, 의견이 갈리면 둘 다 물러서지 않기 쉽습니다. 결정 권한을 영역별로 나눠 두는 것이 좋습니다.';
+    if (!a && !b) return '두 사람 모두 주변과의 관계 속에서 힘을 얻는 신약 사주입니다. 서로 배려하고 맞춰 주는 데 익숙하지만, 둘 다 결정을 미루기 쉬워 중요한 일은 기한을 정해 두는 것이 좋습니다.';
+    const S = a ? A : B, W = a ? B : A;
+    return `${eunNeun(S.name)} 자기 주관이 뚜렷한 신강, ${eunNeun(W.name)} 관계 속에서 힘을 얻는 신약 사주입니다. ${iGa(S.name)} 방향을 잡고 ${iGa(W.name)} 균형을 맞추는 구도가 자연스럽지만, ${W.name}의 의견이 묻히지 않도록 ${iGa(S.name)} 먼저 물어봐 주세요.`;
+  }
+  function profileHTML(P) {
+    const e = STEM_ELEM[P.saju.day.stem], pr = ELEM_PROFILE[e];
+    return `<div class="care"><h4>${esc(P.name)} <span class="tag">${STEMS[P.saju.day.stem]}${e} · ${P.ys.isStrong ? '신강' : '신약'}</span></h4>
+      <p class="kw">${pr.kw.map(k => `<span>#${esc(k)}</span>`).join(' ')}</p>
+      <dl><dt>대화 스타일</dt><dd>${esc(pr.talk)}</dd>
+      <dt>힘이 나는 순간</dt><dd>${esc(pr.want)}</dd>
+      <dt>상처받는 순간</dt><dd>${esc(pr.hurt)}</dd>
+      <dt>갈등할 때</dt><dd>${esc(pr.clash)}</dd>
+      <dt>회복하는 법</dt><dd>${esc(pr.recover)}</dd></dl></div>`;
+  }
+  function wordToHTML(from, to) {
+    const pr = ELEM_PROFILE[STEM_ELEM[to.saju.day.stem]];
+    return `<div class="word-to"><b>${esc(iGa(from.name))} ${esc(to.name)}에게</b><p>${esc(eunNeun(to.name))} ${esc(pr.want)} 가장 힘이 납니다. 반대로 ${esc(pr.hurt)} 쉽게 상처받으니, 그런 상황에서는 한 박자 쉬고 말해 주세요.</p></div>`;
+  }
+  const YEAR_GROUP_TEXT = {
+    '비겁': '자기 주장과 독립심이 강해지는 해입니다. 상대와 주도권이 부딪히지 않게 역할을 나눠 두세요.',
+    '식상': '표현하고 싶은 것이 많아지는 해입니다. 말이 앞서지 않게 하고, 대신 함께 무언가를 만들어 보세요.',
+    '재성': '현실적인 성과와 돈 문제에 관심이 쏠리는 해입니다. 금전·역할 약속을 분명히 해 두세요.',
+    '관성': '책임과 압박이 커지는 해입니다. 상대가 예민해 보이면 다그치기보다 쉬게 해 주세요.',
+    '인성': '배우고 생각이 깊어지는 해입니다. 혼자 있는 시간을 존중해 주면 관계가 편해집니다.',
+  };
+  function nearYearsHTML(years) {
+    return years.slice(0, 2).map(y => `<div class="near-yr"><h4>${y.yr}년 <span class="muted">${esc(y.gz)}년 · ${esc(y.label)}</span></h4>
+      ${[['a', y.a], ['b', y.b]].map(([k, r]) => `<p><b>${esc(k === 'a' ? y.aName : y.bName)}</b> · ${esc(r.god10)}(${esc(r.group5)}) · ${esc(r.stage)} — ${esc(YEAR_GROUP_TEXT[r.group5] || '')}</p>`).join('')}
+    </div>`).join('');
+  }
+
   /* ---------- 공통 렌더 조각 ---------- */
   const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const ELEM_CLASS = { '목': 'mok', '화': 'hwa', '토': 'to', '금': 'geum', '수': 'su' };
@@ -298,7 +386,7 @@
     const note = axis.note && !locked ? `<div class="axis-note">${esc(axis.note)}</div>` : '';
     const body = locked
       ? `<div class="axis-locked"><span class="lock-ico" aria-hidden="true">鎖</span>상세 리포트에서 풀이 전문을 볼 수 있습니다</div>`
-      : `<div class="axis-text">${esc(fixNa(axis.text))}</div>`;
+      : `<div class="axis-text">${esc(fixNa(axis.text))}</div>` + (axisGuide(axis) ? `<div class="axis-guide"><b>이렇게 해 보세요</b> ${esc(axisGuide(axis))}</div>` : '');
     return `<article class="axis-card${locked ? ' is-locked' : ''}">
       <div class="axis-head"><h3>${esc(axis.title)}</h3><span class="tier-badge tier-${axis.tier}">${axis.tier}</span></div>
       ${locked ? '' : stems + nap}${note}${body}</article>`;
@@ -386,6 +474,11 @@
     const issued = `${today.getFullYear()}.${String(today.getMonth() + 1).padStart(2, '0')}.${String(today.getDate()).padStart(2, '0')}`;
     const goodYears = years.filter(y => y.kind === 'good').map(y => y.yr);
     const careYears = years.filter(y => y.kind === 'care').map(y => y.yr);
+    const AXN = { cheongan: '기본 기질', sibsinIlgan: '마주할 때', complement: '빈자리 채움', effect: '서로의 힘', twelveStage: '다가오는 기운', sibsinYeongan: '주변의 시선', napeum: '타고난 바탕', dayPillar: '생활 리듬' };
+    const allAx = result.axes.concat(result.auxAxes);
+    const goodAx = allAx.filter(x => x.tier === '우호').map(x => AXN[x.key]);
+    const careAx = allAx.filter(x => x.tier === '주의').map(x => AXN[x.key]);
+    years.forEach(y => { y.aName = A.name; y.bName = B.name; });
     const person = P => `
       <div class="person">
         <h4>${esc(P.name)} <span class="muted">${esc(P.date.replace(/-/g, '.'))}${P.time ? ' ' + esc(P.time) : ' (시각 모름)'}</span></h4>
@@ -407,6 +500,10 @@
       <h2 class="pair-title">${esc(A.name)} <span class="x">×</span> ${esc(B.name)}</h2>
       <p class="muted small">발행일 ${issued} · 심명 사주코어 엔진 · 정자시 기준</p>
       ${tallyHTML(result)}
+      <div class="at-glance">
+        <div><b>잘 맞는 축</b><span>${esc(goodAx.join(' · ') || '뚜렷한 축 없음')}</span></div>
+        <div><b>조심할 축</b><span>${esc(careAx.join(' · ') || '뚜렷한 축 없음')}</span></div>
+      </div>
       <div class="key-years">
         <div><b>함께 힘이 나는 해</b><span>${goodYears.length ? goodYears.join(', ') : '10년 안에 뚜렷한 해 없음'}</span></div>
         <div><b>서로 조심할 해</b><span>${careYears.length ? careYears.join(', ') : '10년 안에 뚜렷한 해 없음'}</span></div>
@@ -414,14 +511,23 @@
     </section>
     ${relationHTML(an)}
     <section class="panel"><h3 class="sec">1. 두 사람의 사주 원국</h3><div class="persons">${person(A)}${person(B)}</div></section>
-    <section class="panel"><h3 class="sec">2. 핵심 6축 풀이</h3><div class="axis-list">${result.axes.map(a => axisCard(a, false)).join('')}</div></section>
-    <section class="panel"><h3 class="sec">3. 보조 전통기법 2종</h3><div class="axis-list">${result.auxAxes.map(a => axisCard(a, false)).join('')}</div></section>
-    <section class="panel"><h3 class="sec">4. 앞으로 10년, 함께 보는 흐름</h3>
+    <section class="panel"><h3 class="sec">2. 두 사람의 성향 비교</h3>
+      <p class="small">일간(태어난 날의 기운) 오행으로 본 두 사람의 대화 방식과 갈등 패턴입니다.</p>
+      <div class="persons">${profileHTML(A)}${profileHTML(B)}</div>
+      <p class="narr">${esc(strengthPairText(A, B))}</p>
+      <h4 class="sub-h">서로에게 건네는 한마디</h4>
+      <div class="persons">${wordToHTML(A, B)}${wordToHTML(B, A)}</div></section>
+    <section class="panel"><h3 class="sec">3. 핵심 6축 풀이</h3><div class="axis-list">${result.axes.map(a => axisCard(a, false)).join('')}</div></section>
+    <section class="panel"><h3 class="sec">4. 보조 전통기법 2종</h3><div class="axis-list">${result.auxAxes.map(a => axisCard(a, false)).join('')}</div></section>
+    <section class="panel"><h3 class="sec">5. 올해와 내년, 각자의 기운</h3>
+      <p class="small">두 사람에게 올해와 내년이 어떤 해인지, 상대가 알아 두면 좋은 점을 함께 적었습니다.</p>
+      ${nearYearsHTML(years)}</section>
+    <section class="panel"><h3 class="sec">6. 앞으로 10년, 함께 보는 흐름</h3>
       <p class="muted small">해마다 두 사람의 세운(그해의 기운)을 각자의 용신·12운성에 대입해 견줘 본 결과입니다.</p>
       <ol class="years">${years.map(y => yearRowHTML(y, A, B)).join('')}</ol></section>
-    <section class="panel"><h3 class="sec">5. 관계 처방</h3><div class="persons">${care(A, B)}${care(B, A)}</div></section>
+    <section class="panel"><h3 class="sec">7. 관계 처방</h3><div class="persons">${care(A, B)}${care(B, A)}</div></section>
     <section class="panel note-panel"><p class="small">이 리포트는 명리학 이론(오행 상생상극·십신·12운성·합충·용신)에 따른 참고용 해설이며, 두 사람 관계의 결과를 보장하지 않습니다. 실제 관계는 서로의 대화와 노력이 가장 중요합니다.</p></section>`;
   }
 
-  root.GunghapReport = { relationReading, RELATIONS, REL_GROUPS, toKST, encodeOrder, decodeOrder, unlockKey, analyze, renderFree, renderFull, won, esc };
+  root.GunghapReport = { axisGuide, relationReading, RELATIONS, REL_GROUPS, toKST, encodeOrder, decodeOrder, unlockKey, analyze, renderFree, renderFull, won, esc };
 })(typeof window !== 'undefined' ? window : globalThis);
