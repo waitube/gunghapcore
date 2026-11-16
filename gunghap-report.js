@@ -335,6 +335,24 @@
     '금': { kw: ['원칙', '결단', '정리'], talk: '분명하고 간결한 말을 좋아하고, 돌려 말하는 것을 답답해합니다.', want: '근거를 들어 솔직하게 말해 줄 때', hurt: '애매한 태도나 약속을 흐지부지할 때', clash: '갈등이 생기면 선을 긋고 거리를 두는 편입니다.', recover: '혼자 정리하는 시간을 가지며 기운을 회복합니다.' },
     '수': { kw: ['지혜', '유연', '깊이'], talk: '충분히 생각한 뒤 말하고, 깊은 대화를 좋아합니다.', want: '끝까지 들어주고 생각할 시간을 줄 때', hurt: '재촉받거나 속마음을 함부로 단정당할 때', clash: '갈등이 생기면 말을 아끼고 속으로 삭이는 편입니다.', recover: '혼자만의 시간이나 물가 산책으로 기운을 회복합니다.' },
   };
+  // 일간 10천간별 성향 (같은 오행이라도 양·음 천간이 다르면 다르게)
+  const STEM_PROFILE = [
+    { img: '큰 나무', kw: ['리더십', '추진', '곧음'], talk: '목표와 방향을 먼저 말하고, 큰 그림으로 이야기합니다.', want: '믿고 맡겨 주며 주도권을 인정해 줄 때', hurt: '체면이 깎이거나 남들 앞에서 지적받을 때', clash: '갈등이 생기면 굽히지 않고 정면으로 밀어붙이는 편입니다.', recover: '새 목표를 세우거나 몸을 움직이며 회복합니다.' },
+    { img: '풀과 덩굴', kw: ['유연', '친화', '끈기'], talk: '부드럽게 돌려 말하고 분위기를 먼저 살핍니다.', want: '세심하게 챙겨 주고 곁에 함께 있어 줄 때', hurt: '혼자 남겨지거나 무심하게 대할 때', clash: '겉으로는 맞춰 주지만 서운한 일은 속으로 오래 기억합니다.', recover: '가까운 사람과 이야기 나누는 시간으로 회복합니다.' },
+    { img: '태양', kw: ['열정', '솔직', '밝음'], talk: '생각나는 대로 시원하게 말하고 분위기를 이끕니다.', want: '여러 사람 앞에서 인정받고 칭찬받을 때', hurt: '무시당하거나 반응이 없을 때', clash: '크게 화내지만 뒤끝 없이 금방 풉니다.', recover: '사람을 만나고 바깥 활동을 하며 회복합니다.' },
+    { img: '촛불', kw: ['따뜻함', '섬세', '배려'], talk: '상대 기분을 살피며 조곤조곤 말합니다.', want: '작은 배려를 알아봐 주고 다정하게 말해 줄 때', hurt: '차갑게 말하거나 감정을 가볍게 여길 때', clash: '마음이 상하면 말수가 줄고 마음을 닫습니다.', recover: '좋아하는 사람과 조용히 시간을 보내며 회복합니다.' },
+    { img: '큰 산', kw: ['듬직', '포용', '신중'], talk: '말을 아끼고, 할 때는 무게 있게 말합니다.', want: '믿고 기다려 주며 약속을 지켜 줄 때', hurt: '재촉받거나 믿음이 깨질 때', clash: '오래 참다가 한 번에 단호하게 선을 긋습니다.', recover: '익숙한 곳에서 푹 쉬며 회복합니다.' },
+    { img: '논밭', kw: ['실속', '현실', '세심'], talk: '구체적인 사실과 생활 이야기를 잘합니다.', want: '수고를 알아주고 실질적으로 도와줄 때', hurt: '노력이 당연하게 여겨질 때', clash: '불만을 쌓아 두다가 조목조목 따지는 편입니다.', recover: '정리 정돈처럼 손을 움직이는 일로 회복합니다.' },
+    { img: '바위와 쇠', kw: ['결단', '의리', '직진'], talk: '돌려 말하지 않고 결론부터 단도직입으로 말합니다.', want: '의리를 지키고 솔직하게 마주해 줄 때', hurt: '뒤에서 말하거나 의리를 저버릴 때', clash: '선을 분명히 긋고 그 자리에서 결판을 내려 합니다.', recover: '운동이나 등산처럼 몸을 쓰며 회복합니다.' },
+    { img: '보석', kw: ['섬세', '완벽', '자존감'], talk: '정확한 표현을 고르고 말끝이 깔끔합니다.', want: '세심한 안목과 노력을 알아봐 줄 때', hurt: '대충 대하거나 자존심을 건드릴 때', clash: '겉으로는 차분하지만 마음속으로 조용히 거리를 둡니다.', recover: '혼자 정리하고 가꾸는 시간으로 회복합니다.' },
+    { img: '바다', kw: ['포용', '지혜', '자유'], talk: '이야기의 폭이 넓고 아이디어가 많습니다.', want: '자유를 존중하고 큰 생각을 들어줄 때', hurt: '간섭받거나 틀에 갇힐 때', clash: '부딪히기보다 흘려보내거나 자리를 피하는 편입니다.', recover: '여행이나 새로운 자극으로 회복합니다.' },
+    { img: '빗물과 이슬', kw: ['섬세', '직관', '깊이'], talk: '조용히 듣다가 핵심을 짚어 말합니다.', want: '속마음을 끝까지 들어주고 공감해 줄 때', hurt: '재촉받거나 속마음을 함부로 단정당할 때', clash: '말을 아끼고 속으로 삭이다 조용히 멀어집니다.', recover: '혼자만의 시간이나 음악·글로 회복합니다.' },
+  ];
+  const GROUP_TRAIT = { '비겁': '자기 뜻대로 해 나가려는 힘이 강한 편', '식상': '표현하고 무언가를 만들어 내는 힘이 강한 편', '재성': '현실 감각과 실속을 챙기는 힘이 강한 편', '관성': '책임감과 원칙을 중시하는 편', '인성': '생각이 깊고 배우는 것을 좋아하는 편' };
+  function uniqueLine(P) {
+    const dom = SC.analyzePillarStrength(P.saju, P.hasTime).dominant;
+    return `사주 전체로 보면 ${GROUP_TRAIT[dom]}이고, ${P.ys.isStrong ? '자기 주관이 뚜렷한 신강 사주' : '주변과 함께할 때 힘을 얻는 신약 사주'}입니다. 가장 부족한 기운은 ${P.ys.weakest}, 가장 필요한 기운(용신)은 ${P.ys.yongsin}입니다.`;
+  }
   function strengthPairText(A, B) {
     const a = A.ys.isStrong, b = B.ys.isStrong;
     if (a && b) return '두 사람 모두 자기 주관이 뚜렷한 신강 사주입니다. 각자 판단력이 좋아 믿고 맡길 수 있지만, 의견이 갈리면 둘 다 물러서지 않기 쉽습니다. 결정 권한을 영역별로 나눠 두는 것이 좋습니다.';
@@ -343,14 +361,19 @@
     return `${eunNeun(S.name)} 자기 주관이 뚜렷한 신강, ${eunNeun(W.name)} 관계 속에서 힘을 얻는 신약 사주입니다. ${iGa(S.name)} 방향을 잡고 ${iGa(W.name)} 균형을 맞추는 구도가 자연스럽지만, ${W.name}의 의견이 묻히지 않도록 ${iGa(S.name)} 먼저 물어봐 주세요.`;
   }
   function profileHTML(P) {
-    const e = STEM_ELEM[P.saju.day.stem], pr = ELEM_PROFILE[e];
-    return `<div class="care"><h4>${esc(P.name)} <span class="tag">${STEMS[P.saju.day.stem]}${e} · ${P.ys.isStrong ? '신강' : '신약'}</span></h4>
+    const st = P.saju.day.stem, e = STEM_ELEM[st], pr = STEM_PROFILE[st];
+    return `<div class="care"><h4>${esc(P.name)} <span class="tag">${STEMS[st]}${e} · ${esc(pr.img)} · ${P.ys.isStrong ? '신강' : '신약'}</span></h4>
       <p class="kw">${pr.kw.map(k => `<span>#${esc(k)}</span>`).join(' ')}</p>
       <dl><dt>대화 스타일</dt><dd>${esc(pr.talk)}</dd>
       <dt>힘이 나는 순간</dt><dd>${esc(pr.want)}</dd>
       <dt>상처받는 순간</dt><dd>${esc(pr.hurt)}</dd>
       <dt>갈등할 때</dt><dd>${esc(pr.clash)}</dd>
-      <dt>회복하는 법</dt><dd>${esc(pr.recover)}</dd></dl></div>`;
+      <dt>회복하는 법</dt><dd>${esc(pr.recover)}</dd>
+      <dt>${esc(P.name)}만의 특징</dt><dd>${esc(uniqueLine(P))}</dd></dl></div>`;
+  }
+  function sameStemNote(A, B) {
+    if (A.saju.day.stem !== B.saju.day.stem) return '';
+    return `<p class="small">두 사람은 일간이 같은 ${STEMS[A.saju.day.stem]}(${STEM_ELEM[A.saju.day.stem]})이라 기본 성향이 닮았습니다. 차이는 '${esc(A.name)}만의 특징'과 '${esc(B.name)}만의 특징'에서 드러나니 그 부분을 비교해 보세요.</p>`;
   }
   // 서로에게 건네는 한마디: 보내는 쪽→받는 쪽 방향, 받는 쪽 용신, 관계 종류에 따라 달라짐
   const SAY_EXAMPLE = {
@@ -372,11 +395,12 @@
   const STAGE_SHORT = { '장생': '새로운 가능성을 열어 주는', '목욕': '설레지만 아직 서로 탐색 중인', '관대': '예의를 갖춰 존중해 주는', '건록': '든든하게 받쳐 주는', '제왕': '존재감이 강하게 느껴지는', '쇠': '편안하고 익숙한', '병': '마음을 흔들기 쉬운', '사': '조금 거리감이 느껴지는', '묘': '무던하고 잔잔한', '절': '연결이 느슨하게 느껴지는', '태': '조심스럽게 가까워지는', '양': '기대고 싶어지게 하는' };
   function wordToHTML(from, to, ctx) {
     const ef = STEM_ELEM[from.saju.day.stem], et = STEM_ELEM[to.saju.day.stem];
-    const pr = ELEM_PROFILE[et];
+    const pr = STEM_PROFILE[to.saju.day.stem];
+    const sameStem = from.saju.day.stem === to.saju.day.stem;
     const cat = GC.pairRelation(ef, et);
     const F = from.name, T = to.name;
     const dir = {
-      bihwa: `두 사람 모두 ${ef} 기운이라 갈등이 생기면 같은 방식으로 맞서기 쉽습니다. ${iGa(F)} 먼저 한 걸음 물러나 "네 생각은 어때?" 하고 물어 주면 평행선이 풀립니다.`,
+      bihwa: `두 사람 모두 ${ef} 기운이라 비슷한 방식으로 맞서기 쉽습니다. ${F}의 경우 ${STEM_PROFILE[from.saju.day.stem].clash} 그럴 때 ${iGa(F)} 먼저 한 걸음 물러나 "네 생각은 어때?" 하고 물어 주면 평행선이 풀립니다.`,
       aGenB: `${F}의 기운이 ${eulReul(T)} 살려 주는 쪽이라, ${iGa(F)} 먼저 챙기는 일이 많아집니다. 지치지 않도록 ${F}도 바라는 것을 솔직하게 말해 두세요.`,
       bGenA: `${T}의 기운이 ${F}에게 힘이 되는 쪽입니다. 받기만 한다고 느끼지 않도록 ${iGa(F)} 고마움을 자주 말로 전해 주세요.`,
       aCtrlB: `${F}의 기운이 ${eulReul(T)} 누르는 쪽이라, ${F}의 말은 생각보다 세게 들립니다. 지적보다 질문으로, 결론보다 이유를 먼저 말해 주세요.`,
@@ -390,7 +414,7 @@
     return `<div class="word-to"><b>${esc(iGa(F))} ${esc(T)}에게</b>
       <p>${esc(dir)}</p>
       <p>${esc(feel)}</p>
-      <p>${ef === et ? esc(`${T}도 ${F}처럼 ${pr.want} 힘이 나는 사람입니다. 내가 바라는 방식 그대로 먼저 해 주면 됩니다.`) : esc(`${eunNeun(T)} ${pr.want} 힘이 나고, ${pr.hurt} 쉽게 상처받습니다.`)} 특히 ${esc(T)}에게 필요한 기운(용신 ${to.ys.yongsin})으로 보면, ${esc(yong.talk)}</p>
+      <p>${sameStem ? esc(`${T}도 ${F}처럼 ${pr.want} 힘이 나는 사람입니다. 내가 바라는 방식 그대로 먼저 해 주면 됩니다.`) : esc(`${eunNeun(T)} ${pr.want} 힘이 나고, ${pr.hurt} 쉽게 상처받습니다.`)} 특히 ${esc(T)}에게 필요한 기운(용신 ${to.ys.yongsin})으로 보면, ${esc(yong.talk)}</p>
       <p class="say">이렇게 말해 보세요 · ${esc(say)}</p></div>`;
   }
 
@@ -599,7 +623,7 @@
     <section class="panel"><h3 class="sec">1. 두 사람의 사주 원국</h3><div class="persons">${person(A)}${person(B)}</div></section>
     <section class="panel"><h3 class="sec">2. 두 사람의 성향 비교</h3>
       <p class="small">일간(태어난 날의 기운) 오행으로 본 두 사람의 대화 방식과 갈등 패턴입니다.</p>
-      <div class="persons">${profileHTML(A)}${profileHTML(B)}</div>
+      <div class="persons">${profileHTML(A)}${profileHTML(B)}</div>${sameStemNote(A, B)}
       <p class="narr">${esc(strengthPairText(A, B))}</p>
       <h4 class="sub-h">서로에게 건네는 한마디</h4>
       <div class="persons">${wordToHTML(A, B, an.ctx)}${wordToHTML(B, A, an.ctx)}</div>
