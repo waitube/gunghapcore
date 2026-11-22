@@ -302,6 +302,7 @@
       const d = await api('/confirm', { paymentKey: q.get('paymentKey'), orderId: q.get('orderId'), amount: Number(q.get('amount')) });
       const o = R.decodeOrder(d.token.slice(0, d.token.lastIndexOf('.')));
       saveMyReport(d.token, o ? `${o.A.name} × ${o.B.name}` : '내 리포트');
+      try { window.gcTrack && gcTrack('purchase', { currency: 'KRW', value: Number(q.get('amount')) || 0, transaction_id: q.get('orderId') }); } catch (e) {}
       history.replaceState(null, '', siteBase() + '#' + d.token);
       $('viewPay').hidden = true;
       await showReport(d.token);

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="midnight"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0A0F24">
+<title>예시 상세 리포트 — 가상의 두 사람 | 궁합코어</title>
+<meta name="description" content="궁합코어 상세 리포트(9,900원)가 어떤 내용인지 가상의 두 사람으로 미리 보는 예시입니다.">
+<meta property="og:title" content="궁합코어 상세 리포트 예시"><meta property="og:image" content="https://gunghapcore.kr/og-image-v2.png">
+<link rel="canonical" href="https://gunghapcore.kr/sample/">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700;900&family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../styles.css">
+<style>
+.sample-bar{position:sticky;top:0;z-index:20;background:#0A0F24ee;backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,255,255,.08);padding:10px 16px;text-align:center;font-size:13px;color:#C9CEE6}
+.sample-bar b{color:#39FF14}
+.sample-cta{display:block;margin:28px auto 8px;max-width:420px;text-align:center;padding:16px 20px;border-radius:16px;background:#39FF14;color:#071a03;font-weight:900;font-size:16px;text-decoration:none}
+.sample-sub{text-align:center;font-size:13px;color:#9AA3C7;margin-bottom:40px}
+</style>
+</head><body>
+<div class="sample-bar">📄 <b>예시 리포트</b> · 가상의 두 사람(민준 × 서연, 연인)으로 만든 실제 상세 리포트 전체입니다</div>
+<header class="top"><div class="wrap">
+  <div class="brand-row"><div class="seal-mark" aria-hidden="true">宮<br>合</div><div><p class="brand">궁합코어</p><p class="brand-sub">상세 리포트 예시</p></div></div>
+  <h1 class="hero-title">결제하면 이런 리포트가<br>두 분 이름으로 열립니다</h1>
+  <p class="lead">아래는 가상의 두 사람으로 만든 예시예요. 실제 리포트는 입력한 두 사람의 사주로 문장이 전부 새로 만들어집니다.</p>
+</div></header>
+<main class="wrap">
+  <div id="fullReport" style="display:grid;gap:22px"></div>
+  <a class="sample-cta" href="../" onclick="window.gcTrack&&gcTrack('sample_cta')">내 궁합 무료로 보기 ›</a>
+  <p class="sample-sub">기본 궁합은 무료, 상세 리포트는 9,900원 · 결제 즉시 열림</p>
+</main>
+<script src="../config.js"></script>
+<script src="../analytics.js"></script>
+<script src="../lunar.js"></script>
+<script src="../saju-core.js"></script>
+<script src="../gunghap-core.js"></script>
+<script src="../gunghap-report.js"></script>
+<script>
+(function(){
+  var R = window.GunghapReport;
+  var A = { name:'민준', date:'1993-03-14', time:'07:20' };
+  var B = { name:'서연', date:'1995-09-02', time:'14:10' };
+  document.getElementById('fullReport').innerHTML = R.renderFull(R.analyze(A, B, 'love'));
+})();
+</script>
+</body></html>

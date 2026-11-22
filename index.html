@@ -206,6 +206,15 @@ select.inp option{background:var(--sheet)}
 .tier-중립{color:var(--ink);background:rgba(154,163,199,.22)}
 .tier-주의{color:#2a0c03;background:var(--care)}
 .ax .lk{font-size:13px;color:var(--purple-hi)}
+.tier-lock{color:var(--purple-hi);background:var(--purple-soft);border:1px dashed rgba(178,107,255,.5)}
+.ax-teaser{margin:-10px 0 0;padding:16px 16px 12px;border:1px solid var(--line);border-top:0;border-radius:0 0 14px 14px;background:rgba(138,43,226,.06);font-size:13px;line-height:1.7;color:var(--ink-2);cursor:pointer}
+.ax-teaser .fade{background:linear-gradient(90deg,var(--ink-2) 40%,transparent);-webkit-background-clip:text;background-clip:text;color:transparent}
+.ax-teaser .more{display:block;margin-top:4px;font-size:12px;font-weight:700;color:var(--purple-hi)}
+.radar .q-dot{fill:var(--purple-soft);stroke:var(--purple-hi);stroke-dasharray:2 2}
+.radar .q-mark{font-size:11px;font-weight:700;fill:var(--purple-hi)}
+.share-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+.share-row .btn{font-size:14px;padding:14px 10px}
+.sample-link{display:block;text-align:center;margin-top:12px;font-size:13px;color:var(--purple-hi);text-decoration:underline;text-underline-offset:3px}
 .ax-body{display:none;padding:2px 14px 14px;font-size:14px;line-height:1.75;color:var(--ink-2);white-space:pre-line}
 .ax-wrap.open .ax-body{display:block}
 .ax-wrap.open .ax{border-bottom-left-radius:0;border-bottom-right-radius:0;border-bottom-color:transparent}
@@ -324,6 +333,7 @@ select.inp option{background:var(--sheet)}
       <div class="rels" id="relsWrap"><h3>조금 더 정확히 골라 주세요</h3><div class="chips" id="rels"></div></div>
       <div class="pick-now" id="pickNow"></div>
       <div class="prices"><span>기본 궁합 <b>무료</b></span><span>상세 리포트 <b id="pR"></b></span><span>1:1 상담 <b id="pC"></b></span></div>
+      <a class="sample-link" href="sample/" onclick="window.gcTrack&&gcTrack('sample_open',{from:'home'})">상세 리포트는 어떤 내용일까? 예시 리포트 보기 ›</a>
       <div class="faq">
         <h2>자주 묻는 질문</h2>
         <details><summary>태어난 시각을 모르면 결과가 틀리나요?</summary><p>시각 없이도 8개 축 모두 계산됩니다. 다만 시주가 빠져 오행 분포와 용신이 조금 달라질 수 있어, 아시면 넣는 편이 더 정확합니다.</p></details>
@@ -379,7 +389,7 @@ select.inp option{background:var(--sheet)}
       <label><input type="radio" name="pm" value="bank"><span class="pn"><b>계좌이체</b><small>입금 확인 후 카카오톡으로 링크 발송</small></span></label>
     </div>
     <div class="bank-box" id="bankBox"></div>
-    <label class="agree"><input type="checkbox" id="agree"><span>상세 리포트는 결제 즉시 제공되는 디지털 콘텐츠로, 제공 후에는 전자상거래법 제17조 제2항에 따라 청약철회가 제한됨을 확인했습니다.</span></label>
+    <label class="agree"><input type="checkbox" id="agree"><span>결제 즉시 열리는 디지털 콘텐츠라 열람 후에는 환불이 어려운 점을 확인했어요. <small style="opacity:.7">(전자상거래법 제17조 제2항)</small></span></label>
     <button class="btn btn-white" id="payGo"></button>
     <div class="note" id="payNote"></div>
   </div>
@@ -401,6 +411,7 @@ select.inp option{background:var(--sheet)}
 </div>
 
 <script src="config.js"></script>
+<script src="analytics.js"></script>
 <script src="lunar.js"></script>
 <script src="saju-core.js"></script>
 <script src="gunghap-core.js"></script>
@@ -578,7 +589,7 @@ select.inp option{background:var(--sheet)}
     if(st.step===1) return go(2);
     if(st.step===2){ const p = readPerson('A'); if(p.error){ $('errA').textContent=p.error; return; } $('errA').textContent=''; return go(3); }
     if(st.step===3){ const p = readPerson('B'); if(p.error){ $('errB').textContent=p.error; return; } $('errB').textContent=''; return analyzeNow(readPerson('A'), p, false); }
-    if(st.step===5) openSheet();
+    if(st.step===5){ track('unlock_click',{from:'dock'}); openSheet(); }
   });
   $('back').addEventListener('click', () => { if(st.step===5) return go(3); if(st.step>1) go(st.step-1); });
 
@@ -592,7 +603,7 @@ select.inp option{background:var(--sheet)}
     go(4);
     let i = 0; $('loadS').textContent = LOAD_MSG[0];
     const t = setInterval(() => { i++; if(i < LOAD_MSG.length) $('loadS').textContent = LOAD_MSG[i]; }, 320);
-    setTimeout(() => { clearInterval(t); renderResult(an, false); go(5); }, 1700);
+    setTimeout(() => { clearInterval(t); renderResult(an, false); go(5); track('result_view',{rel:st.rel}); }, 1700);
   }
 
   /* ---------- 결과 ---------- */
@@ -623,6 +634,16 @@ select.inp option{background:var(--sheet)}
     '편인':'편인(偏印): 다른 관점과 깊은 생각을 주는 관계',
   };
   const fixNa = t => String(t).replace(/(^|[\s(,·])나가(?=\s)/g,'$1내가');
+  // 잠긴 축: 실제 풀이 앞부분만 살짝 (등급을 드러내는 말은 가림)
+  const TIER_WORD = /우호|중립|주의|좋은 궁합|나쁜|조화로운|충돌|어긋/;
+  function teaser(a){
+    const txt = fixNa(a.text||'').replace(/\s+/g,' ').trim();
+    const sents = txt.split(/(?<=[.!?다요])\s+/);
+    let first = sents.find(x => x.length>12 && !TIER_WORD.test(x)) || sents[0] || '';
+    if(TIER_WORD.test(first)) first = first.replace(/[^,·]*$/, '');
+    first = first.split(/,\s|해,|라,|서,/)[0].slice(0, 46);
+    return `<span class="fade">${esc(first)} …</span>`;
+  }
 
   function radarSVG(all){
     const W=340, H=320, cx=170, cy=160, R0=96, n=all.length;
@@ -631,8 +652,10 @@ select.inp option{background:var(--sheet)}
     [1,2,3].forEach(l => { s += `<polygon class="ring" points="${all.map((_,i)=>pt(i,R0*l/3).join(',')).join(' ')}"/>`; });
     all.forEach((_,i) => { const [x,y]=pt(i,R0); s += `<line class="spoke" x1="${cx}" y1="${cy}" x2="${x}" y2="${y}"/>`; });
     [['주의',1],['중립',2],['우호',3]].forEach(([t,l]) => { s += `<text class="ring-lab" x="${cx+4}" y="${cy - R0*l/3 + 11}">${t}</text>`; });
-    s += `<polygon class="area" points="${all.map((a,i)=>pt(i,R0*LV[a.tier]/3).join(',')).join(' ')}"/>`;
-    all.forEach((a,i) => { const [x,y]=pt(i,R0*LV[a.tier]/3); s += `<circle class="dot" cx="${x}" cy="${y}" r="5" fill="${TC[a.tier]}"/>`; });
+    all.forEach((a,i) => {
+      if(FREE_OPEN.includes(a.key)){ const [x,y]=pt(i,R0*LV[a.tier]/3); s += `<circle class="dot" cx="${x}" cy="${y}" r="5" fill="${TC[a.tier]}"/>`; }
+      else { const [x,y]=pt(i,R0*0.62); s += `<circle class="q-dot" cx="${x}" cy="${y}" r="8"/><text class="q-mark" x="${x}" y="${y+4}" text-anchor="middle">?</text>`; }
+    });
     all.forEach((a,i) => {
       const [x,y] = pt(i, R0+30), anc = Math.abs(x-cx)<8 ? 'middle' : (x>cx?'start':'end');
       const dx = anc==='start'? -6 : anc==='end'? 6 : 0;
@@ -658,7 +681,7 @@ select.inp option{background:var(--sheet)}
         <span class="eyebrow">핵심 요약 · ${esc(r.label)}</span>
         <p class="big"><span class="hl">[${grpEmo} ${esc(top.tag)}]</span></p>
         <p class="big-sub">${esc(top.head)} 이런 사람이에요</p>
-        <div class="dots" aria-label="8개 축 우호 ${t['우호']} 중립 ${t['중립']} 주의 ${t['주의']}">${all.map(a=>`<i style="background:${TC[a.tier]}" title="${AXES[a.key][0]} · ${a.tier}"></i>`).join('')}</div>
+        <div class="dots" aria-label="8개 축 우호 ${t['우호']} 중립 ${t['중립']} 주의 ${t['주의']}">${all.map(a=>FREE_OPEN.includes(a.key)?`<i style="background:${TC[a.tier]}" title="${AXES[a.key][0]} · ${a.tier}"></i>`:`<i style="background:transparent;border:1.5px dashed var(--purple-hi)" title="${AXES[a.key][0]} · 상세 리포트에서 공개"></i>`).join('')}</div>
         <div class="quote"><span class="bulb">💡</span>“${esc(top.text)}”</div>
         <div class="roles">
           <div><small>${esc(A.name==='나'?'나의 역할':A.name+'의 역할')}</small><b style="color:var(--neon)">${esc(me.tag)}<br><span class="g">${esc(me.god)}</span></b></div>
@@ -680,19 +703,20 @@ select.inp option{background:var(--sheet)}
 
       <div class="sec">
         <h2 class="sec-h">8개 축 궁합 지도</h2>
-        <p class="sec-s">바깥으로 뻗을수록 서로 잘 맞는 축이에요. 축을 누르면 설명이 열려요.</p>
+        <p class="sec-s">바깥으로 뻗을수록 서로 잘 맞는 축이에요. <b style="color:var(--purple-hi)">?</b> 표시 6개 축의 결과는 상세 리포트에서 열려요.</p>
         <div class="card radar-card">
           ${radarSVG(all)}
-          <div class="legend"><span><i style="background:var(--good)"></i>우호</span><span><i style="background:var(--mid)"></i>중립</span><span><i style="background:var(--care)"></i>주의</span></div>
+          <div class="legend"><span><i style="background:var(--good)"></i>우호</span><span><i style="background:var(--mid)"></i>중립</span><span><i style="background:var(--care)"></i>주의</span><span><i style="border:1.5px dashed var(--purple-hi)"></i>잠김</span></div>
         </div>
         <div class="axes">${all.map(a => {
           const open = FREE_OPEN.includes(a.key);
           return `<div class="ax-wrap" data-k="${a.key}">
             <button type="button" class="ax" ${open?'':'data-lock="1"'}>
               <span class="n"><b>${AXES[a.key][0]}</b><small>${esc(a.title.replace(/^[^\s]+\s/,''))}</small></span>
-              <span class="tier tier-${a.tier}">${a.tier}</span>
+              ${open ? `<span class="tier tier-${a.tier}">${a.tier}</span>` : '<span class="tier tier-lock">결과 잠김</span>'}
               ${open ? '<svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>' : '<span class="lk" aria-label="상세 리포트에서 공개">🔒</span>'}
             </button>
+            ${open ? '' : `<div class="ax-teaser" data-lock="1">${teaser(a)}<span class="more">🔒 이어지는 풀이는 상세 리포트에서</span></div>`}
             ${open ? `<div class="ax-body">${a.stemsText?`<b style="color:var(--ink)">${esc(a.stemsText)}</b>\n`:''}${esc(fixNa(a.text))}${R.axisGuide && R.axisGuide(a) ? `\n\n<b style="color:var(--neon)">이렇게 해 보세요</b> ${esc(R.axisGuide(a))}` : ''}</div>` : ''}
           </div>`; }).join('')}</div>
       </div>
@@ -707,7 +731,12 @@ select.inp option{background:var(--sheet)}
             <p>${esc(x.text)}</p>
           </div>`).join('')}</div>
         ${rd.tip ? `<div class="tip"><b>💡 TIP</b> ${esc(rd.tip)}</div>` : ''}
-        ${rd.cautions.length ? `<p class="caution"><b>함께할 때 조심할 축</b> · ${esc(rd.cautions.join(' · '))}</p>` : ''}
+        ${(()=>{ const oc = all.filter(a=>FREE_OPEN.includes(a.key)&&a.tier==='주의').map(a=>AXES[a.key][0]);
+           const lc = all.filter(a=>!FREE_OPEN.includes(a.key)&&a.tier==='주의').length;
+           const parts = [];
+           if(oc.length) parts.push(`<b>함께할 때 조심할 축</b> · ${esc(oc.join(' · '))}`);
+           if(lc) parts.push(`<b style="color:var(--purple-hi)">🔒 잠긴 축 중 ${lc}개에 주의 신호</b>가 있어요. 어떤 축인지와 푸는 법은 상세 리포트에 있어요.`);
+           return parts.length ? `<p class="caution">${parts.join('<br>')}</p>` : ''; })()}
       </div>
 
       <div class="sec">
@@ -735,8 +764,14 @@ select.inp option{background:var(--sheet)}
             <p>${esc(A.name)} × ${esc(B.name)}, 두 사람만을 위한 상세 풀이</p>
             <div class="incl"><span>6개 축 풀이 전문</span><span>두 사람 사주 원국</span><span>앞으로 10년 흐름</span><span>관계 처방</span></div>
             <button type="button" class="btn btn-purple" id="unlockBtn">상세 리포트 열기 · ${won(PRICE)}</button>
+            <a class="sample-link" id="sampleLink2" href="sample/" target="_blank" rel="noopener">결제 전에 예시 리포트 전체 보기 ›</a>
           </div>
         </div>
+      </div>
+
+      <div class="share-row">
+        <button type="button" class="btn btn-neon" id="shareBtn">💬 ${esc(B.name)}에게 궁합 보내기</button>
+        <button type="button" class="btn btn-ghost" id="retry2">다른 사람과 보기</button>
       </div>
 
       <button type="button" class="consult-card" id="consultBtn"><span class="n"><b>심명 1:1 궁합 상담</b><small>결혼 시기·갈등 패턴·가족 관계까지 직접 풀이 · ${won(CFG.consultPrice||100000)}</small></span><span class="go">신청 ›</span></button>
@@ -750,14 +785,33 @@ select.inp option{background:var(--sheet)}
         명리학 이론에 따른 참고용 해설이며 관계의 결과를 보장하지 않습니다. · 엔진 ${esc(SC.ENGINE_VERSION||'')}
       </div>`;
 
+    $('v5').querySelectorAll('.ax-teaser').forEach(b => b.addEventListener('click', () => { track('unlock_click',{from:'teaser'}); openSheet(); }));
     $('v5').querySelectorAll('.ax').forEach(b => b.addEventListener('click', () => {
-      if(b.dataset.lock) return openSheet();
+      if(b.dataset.lock){ track('unlock_click',{from:'axis'}); return openSheet(); }
       b.parentNode.classList.toggle('open');
     }));
-    $('unlockBtn').addEventListener('click', openSheet);
+    $('unlockBtn').addEventListener('click', () => { track('unlock_click',{from:'lock_box'}); openSheet(); });
+    $('shareBtn').addEventListener('click', shareResult);
+    $('sampleLink2').addEventListener('click', () => track('sample_open',{from:'result'}));
     $('consultBtn').addEventListener('click', () => openSheet('csheet'));
     $('retry').addEventListener('click', () => go(1));
+    $('retry2').addEventListener('click', () => { track('retry'); go(1); });
     $('sheetWho').textContent = `${A.name} × ${B.name} · ${r.label}`;
+  }
+
+  /* ---------- 통계 · 공유 ---------- */
+  function track(name, params){ try{ window.gcTrack && window.gcTrack(name, params||{}); }catch(e){} }
+  async function shareResult(){
+    if(!current) return;
+    const r = RELS[current.rel];
+    const url = SITE + '#' + current.rel;
+    const text = `${current.A.name} × ${current.B.name} ${r.label} 궁합을 봤어요. 너도 생년월일시 넣고 나랑 궁합 봐 줘 👉`;
+    track('share_click',{rel:current.rel});
+    if(navigator.share){ try{ await navigator.share({ title:'궁합코어', text, url }); return; }catch(e){ if(e && e.name==='AbortError') return; } }
+    const all = text + ' ' + url;
+    let ok = false;
+    try{ if(navigator.clipboard && window.isSecureContext){ await navigator.clipboard.writeText(all); ok = true; } }catch(e){}
+    $('shareBtn').textContent = ok ? '✅ 링크 복사됨 · 카톡에 붙여넣기' : url;
   }
 
   /* ---------- 바텀시트 · 결제 ----------
@@ -824,6 +878,7 @@ select.inp option{background:var(--sheet)}
 
   $('payGo').addEventListener('click', async () => {
     const note = $('payNote'), btn = $('payGo');
+    track('pay_click',{method:pm()});
     if(pm()==='bank'){ window.open(CFG.kakaoUrl, '_blank', 'noopener'); return; }
     if(!$('agree').checked){ note.style.color='var(--care)'; note.textContent='결제 전에 위 안내에 체크해 주세요.'; return; }
     note.style.color='var(--neon)';
@@ -831,6 +886,7 @@ select.inp option{background:var(--sheet)}
     btn.disabled = true; const old = btn.textContent; btn.textContent = '결제창 여는 중…';
     try{
       const o = await api('/order', { code: orderCode() });
+      track('pay_window',{value:o.amount});
       await loadScript('https://js.tosspayments.com/v2/standard');
       const payment = window.TossPayments(CFG.tossClientKey).payment({ customerKey: window.TossPayments.ANONYMOUS });
       const here = location.href.split('#')[0].split('?')[0];
@@ -868,7 +924,7 @@ select.inp option{background:var(--sheet)}
     try{
       const rs = await Promise.allSettled(API ? [sendMail(), sendSms()] : [sendMail()]);
       if(!rs.some(r => r.status==='fulfilled')) throw new Error('send');
-      note.style.color='var(--neon)'; note.textContent = `접수됐어요. 평일 기준 하루 안에 ${phone}로 연락드릴게요.`;
+      track('consult_submit'); note.style.color='var(--neon)'; note.textContent = `접수됐어요. 평일 기준 하루 안에 ${phone}로 연락드릴게요.`;
       btn.textContent = '신청 완료';
     }catch(ex){
       note.innerHTML = `신청을 보내지 못했어요. 잠시 후 다시 누르시거나 <a href="${esc(CFG.kakaoUrl)}" target="_blank" rel="noopener" style="color:var(--neon)">카카오톡</a>으로 남겨 주세요.`;
