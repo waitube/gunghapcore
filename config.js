@@ -9,7 +9,7 @@
 window.GUNGHAP_CONFIG = {
   // 방문 통계 — 구글 애널리틱스(GA4) 측정 ID (예: 'G-ABC123XYZ'). 비워 두면 통계를 보내지 않습니다.
   //  analytics.google.com → 관리 → 데이터 스트림 → 웹 → gunghapcore.kr 로 만들면 나오는 ID입니다.
-  gaId: '',
+  gaId: 'G-46Y9NCN9JX',
 
   // 사이트 주소 (리포트 링크를 만들 때 앞부분으로 씁니다)
   siteUrl: 'https://gunghapcore.kr/',   // 사이트 주소가 바뀌면 여기를 고치세요
