@@ -340,7 +340,7 @@ select.inp option{background:var(--sheet)}
         <details><summary>음력 생일만 알아요.</summary><p>생년월일 옆의 '음력'을 누르고 음력 날짜를 그대로 넣으시면 됩니다. 윤달이면 '윤달이에요'에 체크해 주세요. 한국천문연구원 기준으로 양력으로 바꿔 계산합니다.</p></details>
         <details><summary>연인이 아니어도 궁합을 볼 수 있나요?</summary><p>네. 명리학의 궁합은 두 사람의 기운이 서로 살려 주는지, 누르는지를 보는 것이라 상사·부하직원·동료·거래처·동업자, 부모님·자녀·형제자매·배우자 가족, 친구까지 어떤 관계에도 쓸 수 있습니다.</p></details>
         <details><summary>점수로 궁합을 알려주지 않나요?</summary><p>축마다 성격이 다른 기운을 하나의 숫자로 뭉뚱그리지 않기 위해 '우호·중립·주의' 3단계로만 보여드립니다.</p></details>
-        <details><summary>리포트는 어떻게 받나요?</summary><p>카드·간편결제는 결제 즉시 리포트가 열리고, 계좌이체는 입금 확인 후 카카오톡으로 링크를 보내 드립니다. 링크는 기간 제한 없이 다시 열어볼 수 있습니다.</p></details>
+        <details><summary>리포트는 어떻게 받나요?</summary><p>카드·간편결제(카카오페이·네이버페이·토스페이·애플페이)와 계좌이체는 결제 즉시 리포트가 열립니다. 무통장 입금은 입금 확인 후 카카오톡으로 링크를 보내 드립니다. 링크는 기간 제한 없이 다시 열어볼 수 있습니다.</p></details>
         <details><summary>환불되나요?</summary><p>리포트를 받기 전에는 전액 환불됩니다. 받은 뒤에는 디지털 콘텐츠 특성상 환불이 어렵고, 입력 오류로 잘못 만들어진 경우 무료로 다시 만들어 드립니다.</p></details>
       </div>
       <nav class="guides"><a href="boss/">직장 상사 궁합</a><a href="couple/">부부 궁합</a><a href="inlaw/">고부·시댁 궁합</a><a href="some/">썸 궁합</a><a href="partner/">동업 궁합</a><a href="family/">부모 자녀 궁합</a></nav>
@@ -386,7 +386,8 @@ select.inp option{background:var(--sheet)}
     <div class="price"><span>6개 축 풀이 · 10년 흐름 · 관계 처방</span><b id="sheetPrice"></b></div>
     <div class="pay">
       <label><input type="radio" name="pm" value="card" checked><span class="pn"><b>카드 · 간편결제</b><small>토스페이먼츠 · 결제 즉시 리포트 열림</small></span></label>
-      <label><input type="radio" name="pm" value="bank"><span class="pn"><b>계좌이체</b><small>입금 확인 후 카카오톡으로 링크 발송</small></span></label>
+      <label><input type="radio" name="pm" value="transfer"><span class="pn"><b>계좌이체</b><small>토스 퀵계좌이체 · 결제 즉시 리포트 열림</small></span></label>
+      <label><input type="radio" name="pm" value="bank"><span class="pn"><b>무통장 입금</b><small>직접 입금 후 카카오톡으로 신청 · 확인 후 링크 발송</small></span></label>
     </div>
     <div class="bank-box" id="bankBox"></div>
     <label class="agree"><input type="checkbox" id="agree"><span>결제 즉시 열리는 디지털 콘텐츠라 열람 후에는 환불이 어려운 점을 확인했어요. <small style="opacity:.7">(전자상거래법 제17조 제2항)</small></span></label>
@@ -853,13 +854,13 @@ select.inp option{background:var(--sheet)}
   const pm = () => document.querySelector('input[name=pm]:checked').value;
   function payLabel(){
     const m = pm();
-    $('payGo').textContent = m==='card' ? `${won(PRICE)} 결제하기` : '카카오톡으로 신청하기';
+    $('payGo').textContent = m==='bank' ? '카카오톡으로 신청하기' : `${won(PRICE)} ${m==='transfer'?'계좌이체로 ':''}결제하기`;
     $('bankBox').classList.toggle('show', m==='bank');
-    $('agree').closest('label').style.display = m==='card' ? '' : 'none';
+    $('agree').closest('label').style.display = m==='bank' ? 'none' : '';
     $('payNote').textContent = '';
   }
   document.querySelectorAll('input[name=pm]').forEach(i => i.addEventListener('change', payLabel));
-  if(!(API && CFG.tossClientKey)){ document.querySelector('input[name=pm][value=bank]').checked = true; document.querySelector('input[name=pm][value=card]').closest('label').style.display='none'; }
+  if(!(API && CFG.tossClientKey)){ document.querySelector('input[name=pm][value=bank]').checked = true; ['card','transfer'].forEach(v => document.querySelector(`input[name=pm][value=${v}]`).closest('label').style.display='none'); }
   let openId = null;
   function openSheet(id){
     id = typeof id === 'string' ? id : 'sheet';
@@ -891,14 +892,14 @@ select.inp option{background:var(--sheet)}
       const payment = window.TossPayments(CFG.tossClientKey).payment({ customerKey: window.TossPayments.ANONYMOUS });
       const here = location.href.split('#')[0].split('?')[0];
       await payment.requestPayment({
-        method:'CARD', amount:{ currency:'KRW', value:o.amount }, orderId:o.orderId, orderName:o.orderName,
+        method: pm()==='transfer' ? 'TRANSFER' : 'CARD', amount:{ currency:'KRW', value:o.amount }, orderId:o.orderId, orderName:o.orderName,
         successUrl: SITE + '?pay=ok',   // 결제 승인·리포트 열기는 메인 페이지가 처리
         failUrl: here + '?pay=fail',
       });
     }catch(e){
       const code = e && (e.code || (e.data && e.data.error));
       note.style.color='var(--care)';
-      note.textContent = code==='USER_CANCEL' ? '결제를 취소했어요. 다시 누르면 이어서 결제할 수 있어요.' : `결제를 시작하지 못했어요. ${e.message||''} 계속 안 되면 계좌이체로 신청해 주세요.`;
+      note.textContent = code==='USER_CANCEL' ? '결제를 취소했어요. 다시 누르면 이어서 결제할 수 있어요.' : `결제를 시작하지 못했어요. ${e.message||''} 계속 안 되면 무통장 입금으로 신청해 주세요.`;
     }finally{ btn.disabled = false; btn.textContent = old; }
   });
 
