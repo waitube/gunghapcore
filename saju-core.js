@@ -14,7 +14,7 @@
      </script>
 
    * 원본 saju-core.html에서 계산 로직을 옮긴 공통 엔진입니다.
-   * 통일본 v2026.11.07b (SCM·gunghapcore·평생앱 공용) — 아래 항목이 확정 반영됨
+   * 통일본 v2026.11.26 (SCM·gunghapcore·평생앱 공용) — 아래 항목이 확정 반영됨
      ① 자시는 정자시로 고정 (23:30부터 다음날 일주, jasiMode 인자는 무시)
      ② 시지는 한국 표준시 30분 보정 (자시 23:30~01:29 … 해시 21:30~23:29)
      ③ 희신 = 용신을 생하는 오행 (whoGenerates(yongsin))
@@ -22,6 +22,10 @@
      ⑤ 서머타임·표준시 변경 보정 (1948~51, 1955~60, 1987~88 서머타임 / 1954.3~1961.8 UTC+8:30)
         → 입력은 "그때 시계가 가리킨 시각". 엔진이 동경135도(UTC+9) 기준 시각으로 바꾼 뒤 계산 (2026.11.07 확정)
      ⑥ 흐르는 운(대운·세운)의 십신·용신 판정은 지지 기준. 원국은 일간 기준 유지 (2026.11.07 확정)
+     ⑦ 재다신약(신약 + 재성이 최강 오행): 비겁 용신·인성 희신. 일간 말고 비겁이 없으면 재를 설기하는 관성을 용신으로
+        (2026.11.26 확정 · 신약 사주에서는 가장 강한 오행을 극하는 오행이나 설기하는 오행을 용신으로 쓸 수 있다)
+     ⑧ 용신 판단 순서: 억부 먼저, 조후는 그다음. 조후 오행이 원국에 이미 있으면 억부 용신을 유지 (2026.11.26 확정)
+        예: 2013.11.19 12:48 여 — 해월생이지만 화 2개 → 재다신약 토 용신·화 희신
      이 파일을 고칠 때는 모든 저장소의 사본을 같이 갱신하세요.
    ============================================================ */
 
@@ -353,8 +357,20 @@ function computeYongsin(saju, hasTime){
   // 그 관성에 눌려 약해진 일간 오행(비겁)을 용신으로, 그것을 생하는 인성을 희신으로 삼는다.
   // 이 판단은 통관보다 우선한다. (예: 1974.4.10 23:40 임수 일간, 토 최강 → 용신 수·희신 금)
   const gwanElem = whoControls(dayElem);
+  const jaeElem = CONTROLS[dayElem];                 // 일간이 극하는 오행 = 재성
+  const bigeopOthers = counts[dayElem] - 1;          // 일간 자신을 뺀 비겁 세력
   let yongsin, reason;
-  if(!isStrong && strongest === gwanElem){
+  // ⑦ 재다신약 (2026.11.26 확정): 재를 극하는 비겁을 용신으로 (희신은 비겁을 생하는 인성).
+  //    일간 말고 비겁이 없으면, 재의 기운을 빼주는(설기) 관성을 용신으로.
+  //    (인성은 왕한 재에 극을 당해 힘을 못 쓴다 — 재극인)
+  const jaeda = !isStrong && strongest === jaeElem && (bigeopOthers > 0 || counts[gwanElem] > 0);
+  if(jaeda && bigeopOthers > 0){
+    yongsin = dayElem;
+    reason = `재다신약 — 가장 강한 ${strongest}(재성)에 일간이 눌려 있고, 인성은 재에 극을 당해 힘을 못 씁니다. 재를 직접 막아 주는 ${dayElem}(비겁)을 용신으로, 비겁을 생하는 인성을 희신으로 삼습니다.`;
+  } else if(jaeda){
+    yongsin = gwanElem;
+    reason = `재다신약 — 일간 말고는 비겁이 없어, 왕한 ${strongest}(재성)의 기운을 빼 주는(설기) ${gwanElem}(관성)을 용신으로 삼습니다.`;
+  } else if(!isStrong && strongest === gwanElem){
     yongsin = dayElem;
     reason = `신약 사주 — 가장 강한 ${strongest}(관성)이 일간 ${dayElem}을 극해 약하게 만들고 있으므로, 눌린 ${dayElem}(비겁)을 용신으로 삼아 직접 힘을 세웁니다.`;
   } else if(tonggwan && counts[tonggwan.mediator] > 0){
@@ -667,7 +683,7 @@ function analyzePillarStrength(saju, hasTime){
     // 간지 유틸
     gzFromIndex, findGZIndex,
     // 사주 산출 (+ 서머타임·옛 표준시 보정)
-    computeSaju, normalizeToKST, ENGINE_VERSION: 'v2026.11.07b',
+    computeSaju, normalizeToKST, ENGINE_VERSION: 'v2026.11.26',
     // 용신(억부·조후·통관·병약) 분석
     computeYongsin,
     // 십신 / 12운성
